@@ -1,31 +1,60 @@
-const {Schema, Types, default: mongoose} = require("mongoose");
+const { Schema, default: mongoose } = require("mongoose");
 
-const ProductSchema = new Schema({
-    name: String,
-    images: [String],
-    description: String,
-    price: Float32Array,
-    color: String,
-    size: String,
-    company: {
-        type: Schema.Types.ObjectId,
-        ref: "Seller"
+const ProductSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
     },
-    category: [
+    images: {
+      type: [
         {
-            type: Schema.Types.ObjectId,
-            ref: "Category"
-        }
-    ],
-    quantity: Number,
-    reviews: [{body: String, rating: Number, date: Date, author: String}],
-    offer: {
-        discount: Number, 
-        validUntil: Date
+          url: String,
+          color: String,
+          size: [String],
+          info_type: String,
+        },
+      ],
+      required: true,
     },
-}, {
-    timestamps: true
-})
-
+    description: {
+      type: String,
+      required: true,
+    },
+    custom_information: [
+      {
+        name: String,
+        detail: String,
+      },
+    ],
+    price: {
+      type: Schema.Types.Decimal128,
+      required: true,
+    },
+    colors: [string],
+    sizes: [String],
+    info_type: [String],
+    company_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Company",
+    },
+    category_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    reviews: [{ body: String, rating: Number, date: Date, author: String }],
+    discount_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Discount",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 module.exports = mongoose.model("Product", ProductSchema);
