@@ -5,7 +5,7 @@ const port = 3000
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
-})
+});
 
 
 // TODO: 
@@ -18,6 +18,7 @@ app.get('/', (req, res) => {
 // User
 // Seller/Company
 // Orders
+// Discount
 
 
 // Client API
@@ -67,17 +68,14 @@ app.get('/', (req, res) => {
 // Login
 
 // Products
-
 // CRUD on Products
 // CRUD on Sub-categories
 
 // Orders
-
 // Get All Orders that you get
 // POST/Add to order (Delivered or Pending)
 
 // Earnings
-
 // Get Payment after client Pay
 
 
