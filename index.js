@@ -1,14 +1,18 @@
+const express = require("express");
+const cors = require("cors");
+const app = express();
+const port = 3000;
 
-const express = require('express')
-const app = express()
-const port = 3000
-
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+app.get("/", (req, res) => {
+  res.send("Hello World!");
 });
 
+app.use(cors());
 
-// TODO: 
+app.use("/api/client", require("./routes/client/index"));
+app.use("/api/seller", require("./routes/seller/index"));
+
+// TODO:
 
 // Database Tables:-
 
@@ -16,10 +20,11 @@ app.get('/', (req, res) => {
 // Categories
 // Sub-Categories
 // User
-// Seller/Company
+// User Address
+// Seller
+// Company
 // Orders
 // Discount
-
 
 // Client API
 
@@ -58,9 +63,6 @@ app.get('/', (req, res) => {
 // After Payment
 // POST/Add the order to the Order table.
 
-
-
-
 // Seller API
 
 // Authentication
@@ -78,8 +80,6 @@ app.get('/', (req, res) => {
 // Earnings
 // Get Payment after client Pay
 
-
-
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+  console.log(`Example app listening on port ${port}`);
+});
