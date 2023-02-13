@@ -39,9 +39,9 @@ const ProductSchema = new Schema(
       ref: "companys",
       required: true
     },
-    category_id: {
+    seller_id: {
       type: Schema.Types.ObjectId,
-      ref: "categorys",
+      ref: "sellers",
       required: true
     },
     quantity: {

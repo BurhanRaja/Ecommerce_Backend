@@ -5,30 +5,22 @@ const SellerSchema = new Schema({
     type: String,
     required: true,
   },
-  middle_name: {
-    type: String,
-    required: true,
-  },
   last_name: {
     type: String,
     required: true,
   },
-  country_citizenship: {
+  email: {
     type: String,
-    required: true
+    required: true,
   },
-  country_of_birth: {
+  password: {
     type: String,
-    required: true
+    required: true,
   },
-  dob: {
-    type: String,
-    required: true
-  },
-  identity_proof: {
-    type: String,
-    required: true
+  admin: {
+    type: Boolean,
+    required: true,
   },
 });
 
-module.exports = mongoose.model("Seller");
+module.exports = mongoose.model("Seller", SellerSchema);

@@ -18,7 +18,7 @@ exports.getUser = async (req, res, next) => {
   } catch (err) {
     res
       .status(500)
-      .send({ success: false, message: "Internal Server Occurred." });
+      .send({ success: false, error: "Internal Server Occurred." });
   }
 };
 

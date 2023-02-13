@@ -1,9 +1,9 @@
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const User = require("../../model/User");
+const Seller = require("../../model/Seller");
 
-// User Register
+// Seller Register
 exports.register = async (req, res, next) => {
   let success = false;
 
@@ -13,30 +13,30 @@ exports.register = async (req, res, next) => {
   }
 
   try {
-    const { fname, lname, email, password, phone } = req.body;
+    const { fname, lname, email, password, admin } = req.body;
 
-    let user = await User.findOne({ email: req.body.email });
-    if (user) {
+    let seller = await Seller.findOne({ email: email });
+    if (seller) {
       return res.status(400).send({
         success,
-        error: "User already Exists.",
+        error: "Seller already Exists.",
       });
     }
 
     const salt = await bcrypt.genSalt(10);
     const securePassword = await bcrypt.hash(password, salt);
 
-    user = await User.create({
+    seller = await Seller.create({
       first_name: fname,
       last_name: lname,
       email: email,
       password: securePassword,
-      phone_number: phone,
+      admin: admin,
     });
 
     let data = {
-      user: {
-        id: user.id,
+      seller: {
+        id: seller.id,
       },
     };
 
@@ -50,15 +50,15 @@ exports.register = async (req, res, next) => {
       token: authToken,
       message: "Successfully Registered!",
     });
-  } catch (err) {
-    console.log(err);
-    res
-      .status(500)
-      .send({ success: false, error: "Internal Server Occurred." });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      error: "Internal Server Error!",
+    });
   }
 };
 
-// User Login
+// Seller Login
 exports.login = async (req, res, next) => {
   let success = false;
 
@@ -70,14 +70,15 @@ exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email: email });
-    if (!user) {
+    const seller = await Seller.findOne({ email: email });
+
+    if (!seller) {
       return res.status(400).send({
         error: "Invalid Credentials.",
       });
     }
 
-    const passwordCompare = bcrypt.compare(password, user.password);
+    const passwordCompare = bcrypt.compare(password, seller.password);
     if (!passwordCompare) {
       return res.status(400).send({
         error: "Invalid Credentials.",
@@ -85,8 +86,8 @@ exports.login = async (req, res, next) => {
     }
 
     let data = {
-      user: {
-        id: user.id,
+      seller: {
+        id: seller.id,
       },
     };
 

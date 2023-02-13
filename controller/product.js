@@ -2,11 +2,11 @@ const { validationResult } = require("express-validator");
 const Product = require("../model/Product");
 
 
-// Get Products from a company
+// Get Products from a seller
 exports.getProduct = async (req, res, next) => {
   let success = false;
   try {
-    const products = Product.find({ company_id: req.company.id });
+    const products = Product.find({ seller_id: req.seller.id });
     success = true;
     res.status(200).send({
       success,
@@ -50,8 +50,8 @@ exports.createProduct = async (req, res, next) => {
       sizes,
       info_type,
       quantity,
-      company_id: req.company_id.id,
-      category_id: req.category_id.id,
+      seller_id: req.seller.id,
+      category_id: req.category.id,
     });
     success = true;
 
@@ -98,7 +98,7 @@ exports.updateProduct = async (req, res, next) => {
       return res.status(404).send("404 Not Found");
     }
 
-    if (product.company_id.toString() !== req.company.id) {
+    if (product.seller_id.toString() !== req.seller.id) {
       return res.status(401).send("Unauthorized Access!");
     }
 
