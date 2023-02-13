@@ -3,14 +3,13 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../../model/User");
 
-
 // User Register
 exports.register = async (req, res, next) => {
   let success = false;
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return res.status(400).send({ errors: errors.array() });
   }
 
   try {
@@ -18,7 +17,7 @@ exports.register = async (req, res, next) => {
 
     let user = await User.findOne({ email: req.body.email });
     if (user) {
-      return res.status(400).json({
+      return res.status(400).send({
         success,
         message: "User already Exists.",
       });
@@ -46,20 +45,18 @@ exports.register = async (req, res, next) => {
 
     success = true;
 
-    return res.status(201).json({
+    return res.status(201).send({
       success,
       token: authToken,
       message: "Successfully Registered!",
     });
   } catch (err) {
     console.log(err);
-    res.status(500).json({
-      status: "Fail",
-      message: "Internal Server Occurred.",
-    });
+    res
+      .status(500)
+      .send({ success: false, message: "Internal Server Occurred." });
   }
 };
-
 
 // User Login
 exports.login = async (req, res, next) => {
@@ -67,7 +64,7 @@ exports.login = async (req, res, next) => {
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return res.status(400).send({ errors: errors.array() });
   }
 
   try {
@@ -75,14 +72,14 @@ exports.login = async (req, res, next) => {
 
     const user = await User.findOne({ email: email });
     if (!user) {
-      return res.status(400).json({
+      return res.status(400).send({
         error: "Invalid Credentials.",
       });
     }
 
     const passwordCompare = bcrypt.compare(password, user.password);
     if (!passwordCompare) {
-      return res.status(400).json({
+      return res.status(400).send({
         error: "Invalid Credentials.",
       });
     }
@@ -98,16 +95,14 @@ exports.login = async (req, res, next) => {
 
     success = true;
 
-    return res.status(201).json({
-      status: "Success",
+    return res.status(201).send({
+      success,
       token: authToken,
       message: "Successfully Logged In!",
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      status: "Fail",
-      message: "Internal Server Occurred.",
-    });
+    res
+      .status(500)
+      .send({ success: false, message: "Internal Server Occurred." });
   }
 };
