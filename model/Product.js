@@ -37,10 +37,12 @@ const ProductSchema = new Schema(
     company_id: {
       type: Schema.Types.ObjectId,
       ref: "companys",
+      required: true
     },
     category_id: {
       type: Schema.Types.ObjectId,
       ref: "categorys",
+      required: true
     },
     quantity: {
       type: Number,

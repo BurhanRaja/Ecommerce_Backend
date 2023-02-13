@@ -26,7 +26,7 @@ const CompanySchema = new Schema({
         required: true
     },
     seller_id: {
-        type: Schema.Types.ObjectId,
+        type: [Schema.Types.ObjectId],
         required: true
     },
     postal_code: {

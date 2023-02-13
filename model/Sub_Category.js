@@ -7,6 +7,7 @@ const SubCategorySchema = new Schema(
     category_id: {
       type: Schema.Types.ObjectId,
       ref: "categorys",
+      required: true
     },
   },
   {
@@ -15,3 +16,4 @@ const SubCategorySchema = new Schema(
 );
 
 
+module.exports = mongoose.model("Subcategory", SubCategorySchema);

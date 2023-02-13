@@ -1,5 +1,7 @@
 const User = require("../../model/User");
 
+
+// Get User
 exports.getUser = async (req, res, next) => {
   let success = false;
 
@@ -20,6 +22,8 @@ exports.getUser = async (req, res, next) => {
   }
 };
 
+
+// Update User
 exports.updateUser = async (req, res, next) => {
   let success = false;
   try {
@@ -35,7 +39,7 @@ exports.updateUser = async (req, res, next) => {
 
     let user = await User.findById(req.params.id);
     if (!user) {
-      return res.status(404).send("404 Not Found.");
+      return res.status(404).send({success, error: "404 Not Found."});
     }
 
     user = await User.findByIdAndUpdate(
@@ -51,19 +55,19 @@ exports.updateUser = async (req, res, next) => {
       user,
     });
   } catch (err) {
-    res
-    .status(500)
-    .send({ success: false, error: "Internal Server Error." });
+    res.status(500).send({ success: false, error: "Internal Server Error." });
   }
 };
 
+
+// Delete User
 exports.deleteUser = async (req, res, next) => {
   let success = false;
 
   try {
     let user = await User.findById(req.params.id);
     if (!user) {
-      return res.status(404).send("404 Not Found.");
+      return res.status(404).send({success, error: "404 Not Found."});
     }
 
     user = await User.findOneAndDelete(req.params.id, { $set: null });
@@ -75,8 +79,6 @@ exports.deleteUser = async (req, res, next) => {
       message: "User Successfully Deleted.",
     });
   } catch (err) {
-    res
-    .status(500)
-    .send({ success: false, error: "Internal Server Error." });
+    res.status(500).send({ success: false, error: "Internal Server Error." });
   }
 };
