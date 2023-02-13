@@ -1,5 +1,9 @@
 const express = require("express");
 const cors = require("cors");
+const connectToMongoDB = require("./db");
+
+connectToMongoDB();
+
 const app = express();
 const port = 3000;
 
@@ -8,6 +12,7 @@ app.get("/", (req, res) => {
 });
 
 app.use(cors());
+app.use(express.json())
 
 app.use("/api/client", require("./routes/client/index"));
 app.use("/api/seller", require("./routes/seller/index"));
