@@ -69,7 +69,6 @@ exports.login = async (req, res, next) => {
 
   try {
     const { email, password } = req.body;
-
     const seller = await Seller.findOne({ email: email });
 
     if (!seller) {
