@@ -7,7 +7,7 @@ const OrderSchema = new Schema({
   },
   items: [
     {
-      product_id: { type: Schema.Types.ObjectId, ref: "Product" },
+      product_id: { type: Schema.Types.ObjectId, ref: "products" },
       color: String,
       size: String,
       info_type: String,
@@ -16,7 +16,7 @@ const OrderSchema = new Schema({
         type: Schema.Types.Decimal128,
         default: 0,
       },
-      company_id: { type: Schema.Types.ObjectId, ref: "Company" },
+      company_id: { type: Schema.Types.ObjectId, ref: "companys" },
       image: {
         type: String,
         default: 1,

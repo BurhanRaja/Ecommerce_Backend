@@ -36,11 +36,11 @@ const ProductSchema = new Schema(
     info_type: [String],
     company_id: {
       type: Schema.Types.ObjectId,
-      ref: "Company",
+      ref: "companys",
     },
     category_id: {
       type: Schema.Types.ObjectId,
-      ref: "Category",
+      ref: "categorys",
     },
     quantity: {
       type: Number,
@@ -49,7 +49,7 @@ const ProductSchema = new Schema(
     reviews: [{ body: String, rating: Number, date: Date, author: String }],
     discount_id: {
       type: Schema.Types.ObjectId,
-      ref: "Discount",
+      ref: "discounts",
     },
   },
   {

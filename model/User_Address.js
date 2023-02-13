@@ -26,10 +26,6 @@ const UserAddressSchema = new Schema(
       type: String,
       required: true,
     },
-    mobile: {
-      type: Number,
-      required: true,
-    },
     address_type: {
       type: String,
       required: true,

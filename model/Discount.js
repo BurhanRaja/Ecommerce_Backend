@@ -9,7 +9,7 @@ const DiscountSchemas = new Schema(
     activeTill: Date,
     comapny_id: {
         type: Schema.Types.ObjectId,
-        ref: "Company"
+        ref: "companys"
     }
   },
   {
