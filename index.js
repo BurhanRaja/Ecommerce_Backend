@@ -16,6 +16,7 @@ app.use(express.json())
 
 app.use("/api/client", require("./routes/client/index"));
 app.use("/api/seller", require("./routes/seller/index"));
+app.use("/api/admin", require("./routes/admin/index"));
 
 // TODO:
 
