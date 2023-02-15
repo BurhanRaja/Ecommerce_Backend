@@ -1,7 +1,6 @@
 const { validationResult } = require("express-validator");
 const Product = require("../model/Product");
 
-
 // Get Products from a seller
 exports.getProduct = async (req, res, next) => {
   let success = false;
@@ -16,8 +15,6 @@ exports.getProduct = async (req, res, next) => {
     res.status(500).send({ success: false, error: "Internal Server Error." });
   }
 };
-
-
 
 // Create Product
 exports.createProduct = async (req, res, next) => {
@@ -63,7 +60,6 @@ exports.createProduct = async (req, res, next) => {
     res.status(500).send({ success: false, error: "Internal Server Error." });
   }
 };
-
 
 // Update Product
 exports.updateProduct = async (req, res, next) => {
@@ -117,7 +113,6 @@ exports.updateProduct = async (req, res, next) => {
     res.status(500).send({ success: false, error: "Internal Server Error." });
   }
 };
-
 
 // Delete Product
 exports.deleteProduct = async (req, res, next) => {

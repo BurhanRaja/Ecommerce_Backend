@@ -31,7 +31,7 @@ const ProductSchema = new Schema(
       type: Schema.Types.Decimal128,
       required: true,
     },
-    colors: [string],
+    colors: [String],
     sizes: [String],
     info_type: [String],
     company_id: {
