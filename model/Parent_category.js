@@ -1,6 +1,6 @@
 const { Schema, default: mongoose } = require("mongoose");
 
-const CategorySchema = new Schema(
+const ParentCategorySchema = new Schema(
   {
     name: {
       type: String,
@@ -11,14 +11,10 @@ const CategorySchema = new Schema(
       type: String,
       required: true,
     },
-    parent_id: {
-      type: Schema.Types.ObjectId,
-      required: true
-    }
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("Category", CategorySchema);
+module.exports = mongoose.model("ParentCategory", ParentCategorySchema);

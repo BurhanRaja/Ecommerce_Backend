@@ -12,11 +12,12 @@ app.get("/", (req, res) => {
 });
 
 app.use(cors());
-app.use(express.json())
+app.use(express.json());
 
 app.use("/api/client", require("./routes/client/index"));
 app.use("/api/seller", require("./routes/seller/index"));
-app.use("/api/admin", require("./routes/admin/index"));
+app.use("/api/category", require("./routes/category/index"));
+app.use("/api/product", require("./routes/product/index"));
 
 // TODO:
 

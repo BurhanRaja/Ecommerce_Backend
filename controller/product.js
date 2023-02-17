@@ -35,6 +35,7 @@ exports.createProduct = async (req, res, next) => {
       sizes,
       info_type,
       quantity,
+      category_id
     } = req.body;
 
     const product = await Product.create({
@@ -48,7 +49,7 @@ exports.createProduct = async (req, res, next) => {
       info_type,
       quantity,
       seller_id: req.seller.id,
-      category_id: req.category.id,
+      category_id
     });
     success = true;
 

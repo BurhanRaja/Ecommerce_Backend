@@ -1,17 +1,17 @@
 const { validationResult } = require("express-validator");
-const Category = require("../model/Category");
+const ParentCategory = require("../model/Parent_category");
 
-exports.getAllCategories = async (req, res, next) => {
+exports.getAllParentCategories = async (req, res, next) => {
   let success = false;
   try {
-    const categories = await Category.find();
-    if (!categories) {
+    const pCategories = await ParentCategory.find();
+    if (!pCategories) {
       res.status(404).send({ success, error: "404 Not Found" });
     }
     success = true;
     res.status(200).send({
       success,
-      categories,
+      pCategories,
     });
   } catch (err) {
     res.status(500).send({
@@ -30,28 +30,27 @@ exports.createCategory = async (req, res, next) => {
   }
 
   try {
-    const { name, description, parent_id } = req.body;
+    const { name, description } = req.body;
 
-    const category = await Category.findOne({ name: name });
+    const pCategory = await ParentCategory.findOne({ name: name });
 
-    if (category) {
+    if (pCategory) {
       return res.status(400).send({
         success,
-        message: "Category Already exists.",
+        message: "Parent Category Already exists.",
       });
     }
 
-    category = await Category.create({
+    pCategory = await ParentCategory.create({
       name,
       description,
-      parent_id
     });
 
     success = true;
 
     res.status(200).send({
       success,
-      category,
+      pCategory,
     });
   } catch (err) {
     res.status(500).send({ success: false, error: "Internal Server Error." });

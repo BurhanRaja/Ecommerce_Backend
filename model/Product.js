@@ -23,7 +23,6 @@ const ProductSchema = new Schema(
     },
     custom_information: [
       {
-        name: String,
         detail: String,
       },
     ],
@@ -37,12 +36,12 @@ const ProductSchema = new Schema(
     company_id: {
       type: Schema.Types.ObjectId,
       ref: "companys",
-      required: true
+      required: true,
     },
     seller_id: {
       type: Schema.Types.ObjectId,
       ref: "sellers",
-      required: true
+      required: true,
     },
     quantity: {
       type: Number,

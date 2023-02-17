@@ -1,7 +1,7 @@
 const Seller = require("../../model/Seller");
 
 // Get Seller
-exports.getUser = async (req, res, next) => {
+exports.getSeller = async (req, res, next) => {
   let success = false;
 
   try {
@@ -21,7 +21,7 @@ exports.getUser = async (req, res, next) => {
 };
 
 // Update Seller
-exports.updateUser = async (req, res, next) => {
+exports.updateSeller = async (req, res, next) => {
   let success = false;
   try {
     const { fname, lname, email, password, admin } = req.body;
@@ -55,7 +55,7 @@ exports.updateUser = async (req, res, next) => {
 };
 
 // Delete Seller
-exports.deleteUser = async (req, res, next) => {
+exports.deleteSeller = async (req, res, next) => {
   let success = false;
 
   try {
