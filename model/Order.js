@@ -11,12 +11,12 @@ const OrderSchema = new Schema({
       color: String,
       size: String,
       info_type: String,
-      qty: { type: String },
+      qty: { type: Number },
       price: {
         type: Schema.Types.Decimal128,
         default: 0,
       },
-      company_id: { type: Schema.Types.ObjectId, ref: "companys" },
+      seller_info_id: { type: Schema.Types.ObjectId, ref: "sellerinfos" },
       image: {
         type: String,
         default: 1,
