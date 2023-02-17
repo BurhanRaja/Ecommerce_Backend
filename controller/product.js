@@ -35,10 +35,8 @@ exports.createProduct = async (req, res, next) => {
       sizes,
       info_type,
       quantity,
-      category_id
+      category_id,
     } = req.body;
-
-    console.log(req.headers);
 
     const product = await Product.create({
       name,
@@ -51,7 +49,7 @@ exports.createProduct = async (req, res, next) => {
       info_type,
       quantity,
       seller_id: req.seller.id,
-      category_id
+      category_id,
     });
 
     success = true;
@@ -127,6 +125,10 @@ exports.deleteProduct = async (req, res, next) => {
 
     if (!product) {
       return res.status(404).send({ success, error: "404 Not Found" });
+    }
+
+    if (product.seller_id.toString() !== req.seller.id) {
+      return res.status(401).send("Unauthorized Access!");
     }
 
     product = await Product.findOneAndDelete(req.params.id, { $set: null });

@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const Category = require("../model/Category");
 
+// Get All Categories
 exports.getAllCategories = async (req, res, next) => {
   let success = false;
   try {
@@ -21,6 +22,7 @@ exports.getAllCategories = async (req, res, next) => {
   }
 };
 
+// Create Category
 exports.createCategory = async (req, res, next) => {
   let success = false;
 
@@ -44,7 +46,7 @@ exports.createCategory = async (req, res, next) => {
     category = await Category.create({
       name,
       description,
-      parent_id
+      parent_id,
     });
 
     success = true;
@@ -55,5 +57,77 @@ exports.createCategory = async (req, res, next) => {
     });
   } catch (err) {
     res.status(500).send({ success: false, error: "Internal Server Error." });
+  }
+};
+
+// Update Category
+exports.updateCategory = async (req, res, next) => {
+  let success = false;
+
+  let error = validationResult(req);
+  if (!error.isEmpty()) {
+    return res.status(400).send({ error: error.array() });
+  }
+
+  try {
+    const { name, description, parent_id } = req.body;
+
+    let updCat = {};
+
+    if (name) updCat.name = name;
+    if (description) updCat.description = description;
+    if (parent_id) updCat.parent_id = parent_id;
+
+    let category = await Category.findById(req.params.id);
+
+    if (!category) {
+      return res.status(404).send({ success, message: "404 Not Found." });
+    }
+
+    category = await Category.findByIdAndUpdate(
+      req.params.id,
+      { $set: updCat },
+      { new: true }
+    );
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      category,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal Server Error." });
+  }
+};
+
+// Delete Category
+exports.deleteCategory = async (req, res, next) => {
+  let success = false;
+
+  try {
+    let category = await Category.findById(req.params.id);
+
+    if (!category) {
+      return res.status(404).send({
+        success,
+        message: "404 Not Found",
+      });
+    }
+
+    category = await Category.findByIdAndDelete(req.params.id, { $set: null });
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      category,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal Server Error." });
   }
 };
