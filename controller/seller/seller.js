@@ -45,7 +45,7 @@ exports.updateSeller = async (req, res, next) => {
     );
     success = true;
 
-    res.status(200).send({
+    return res.status(200).send({
       success,
       seller,
     });
@@ -67,7 +67,7 @@ exports.deleteSeller = async (req, res, next) => {
     seller = await Seller.findOneAndDelete(req.params.id, { $set: null });
     success = true;
 
-    res.status(200).send({
+    return res.status(200).send({
       success,
       message: "User Successfully Deleted.",
     });

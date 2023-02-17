@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const ParentCategory = require("../model/Parent_category");
+const ParentCategory = require("../model/Parentcategory");
 
 exports.getAllParentCategories = async (req, res, next) => {
   let success = false;
@@ -9,7 +9,7 @@ exports.getAllParentCategories = async (req, res, next) => {
       res.status(404).send({ success, error: "404 Not Found" });
     }
     success = true;
-    res.status(200).send({
+    return res.status(200).send({
       success,
       pCategories,
     });
@@ -21,7 +21,7 @@ exports.getAllParentCategories = async (req, res, next) => {
   }
 };
 
-exports.createCategory = async (req, res, next) => {
+exports.createParentCategory = async (req, res, next) => {
   let success = false;
 
   let error = validationResult(req);
@@ -32,7 +32,7 @@ exports.createCategory = async (req, res, next) => {
   try {
     const { name, description } = req.body;
 
-    const pCategory = await ParentCategory.findOne({ name: name });
+    let pCategory = await ParentCategory.findOne({ name: name });
 
     if (pCategory) {
       return res.status(400).send({
@@ -48,11 +48,12 @@ exports.createCategory = async (req, res, next) => {
 
     success = true;
 
-    res.status(200).send({
+    return res.status(200).send({
       success,
       pCategory,
     });
   } catch (err) {
+    console.log(err);
     res.status(500).send({ success: false, error: "Internal Server Error." });
   }
 };

@@ -1,6 +1,7 @@
 const express = require("express");
 const product = require("../../controller/product");
 const { body } = require("express-validator");
+const checkSeller = require("../../middleware/checkSeller");
 
 const router = express.Router();
 
@@ -31,6 +32,7 @@ router.post(
     body("sizes", "Please add a sizes.").isArray(),
     body("quantity", "Please a available quantity.").isNumeric(),
   ],
+  checkSeller,
   product.createProduct
 );
 

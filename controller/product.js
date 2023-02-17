@@ -7,7 +7,7 @@ exports.getProduct = async (req, res, next) => {
   try {
     const products = Product.find({ seller_id: req.seller.id });
     success = true;
-    res.status(200).send({
+    return res.status(200).send({
       success,
       products,
     });
@@ -38,6 +38,8 @@ exports.createProduct = async (req, res, next) => {
       category_id
     } = req.body;
 
+    console.log(req.headers);
+
     const product = await Product.create({
       name,
       images,
@@ -51,9 +53,10 @@ exports.createProduct = async (req, res, next) => {
       seller_id: req.seller.id,
       category_id
     });
+
     success = true;
 
-    res.status(200).send({
+    return res.status(200).send({
       success,
       product,
     });
@@ -106,7 +109,7 @@ exports.updateProduct = async (req, res, next) => {
     );
     success = true;
 
-    res.status(200).send({
+    return res.status(200).send({
       success,
       product,
     });
@@ -129,7 +132,7 @@ exports.deleteProduct = async (req, res, next) => {
     product = await Product.findOneAndDelete(req.params.id, { $set: null });
     success = true;
 
-    res.status(200).send({
+    return res.status(200).send({
       success,
       product,
     });

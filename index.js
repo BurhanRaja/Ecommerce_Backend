@@ -16,6 +16,7 @@ app.use(express.json());
 
 app.use("/api/client", require("./routes/client/index"));
 app.use("/api/seller", require("./routes/seller/index"));
+app.use("/api/parentcategory", require("./routes/parentcategory/index"));
 app.use("/api/category", require("./routes/category/index"));
 app.use("/api/product", require("./routes/product/index"));
 

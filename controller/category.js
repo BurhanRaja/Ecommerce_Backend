@@ -9,7 +9,7 @@ exports.getAllCategories = async (req, res, next) => {
       res.status(404).send({ success, error: "404 Not Found" });
     }
     success = true;
-    res.status(200).send({
+    return res.status(200).send({
       success,
       categories,
     });
@@ -32,7 +32,7 @@ exports.createCategory = async (req, res, next) => {
   try {
     const { name, description, parent_id } = req.body;
 
-    const category = await Category.findOne({ name: name });
+    let category = await Category.findOne({ name: name });
 
     if (category) {
       return res.status(400).send({
@@ -49,7 +49,7 @@ exports.createCategory = async (req, res, next) => {
 
     success = true;
 
-    res.status(200).send({
+    return res.status(200).send({
       success,
       category,
     });

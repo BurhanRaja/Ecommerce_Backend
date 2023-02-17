@@ -11,7 +11,7 @@ exports.getUser = async (req, res, next) => {
 
     success = true;
 
-    res.send({
+    return res.send({
       success,
       user,
     });
@@ -50,7 +50,7 @@ exports.updateUser = async (req, res, next) => {
 
     success = true;
 
-    res.status(200).send({
+    return res.status(200).send({
       success,
       user,
     });
