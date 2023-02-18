@@ -1,6 +1,5 @@
 const User = require("../../model/User");
 
-
 // Get User
 exports.getUser = async (req, res, next) => {
   let success = false;

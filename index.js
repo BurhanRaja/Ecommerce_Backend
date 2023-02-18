@@ -19,6 +19,7 @@ app.use("/api/seller", require("./routes/seller/index"));
 app.use("/api/parentcategory", require("./routes/parentcategory/index"));
 app.use("/api/category", require("./routes/category/index"));
 app.use("/api/product", require("./routes/product/index"));
+app.use("/api/user/address", require("./routes/useraddress/index"));
 
 // TODO:
 
