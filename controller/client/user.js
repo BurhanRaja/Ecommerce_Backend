@@ -1,12 +1,12 @@
 const User = require("../../model/User");
+const bcrypt = require("bcrypt");
 
 // Get User
 exports.getUser = async (req, res, next) => {
   let success = false;
 
   try {
-    const userId = req.body.id;
-    const user = User.findById(userId).select("-password");
+    const user = await User.findById(req.user.id).select("-password");
 
     success = true;
 
@@ -15,12 +15,12 @@ exports.getUser = async (req, res, next) => {
       user,
     });
   } catch (err) {
+    console.log(err);
     res
       .status(500)
       .send({ success: false, error: "Internal Server Occurred." });
   }
 };
-
 
 // Update User
 exports.updateUser = async (req, res, next) => {
@@ -33,16 +33,28 @@ exports.updateUser = async (req, res, next) => {
     if (fname) updUser.fname = fname;
     if (lname) updUser.lname = lname;
     if (email) updUser.email = email;
-    if (password) updUser.password = password;
     if (phone) updUser.phone = phone;
 
-    let user = await User.findById(req.params.id);
+    let user = await User.findById(req.user.id);
     if (!user) {
-      return res.status(404).send({success, error: "404 Not Found."});
+      return res.status(404).send({ success, error: "404 Not Found." });
     }
 
+    user = await User.findOne({ email: email });
+    if (user) {
+      return res.status(400).send({
+        success,
+        error: "User already Exists.",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const securePassword = await bcrypt.hash(password, salt);
+
+    if (password) updUser.password = securePassword;
+
     user = await User.findByIdAndUpdate(
-      req.params.id,
+      req.user.id,
       { $set: updUser },
       { new: true }
     );
@@ -58,18 +70,17 @@ exports.updateUser = async (req, res, next) => {
   }
 };
 
-
 // Delete User
 exports.deleteUser = async (req, res, next) => {
   let success = false;
 
   try {
-    let user = await User.findById(req.params.id);
+    let user = await User.findById(req.user.id);
     if (!user) {
-      return res.status(404).send({success, error: "404 Not Found."});
+      return res.status(404).send({ success, error: "404 Not Found." });
     }
 
-    user = await User.findOneAndDelete(req.params.id, { $set: null });
+    user = await User.findOneAndDelete(req.user.id, { $set: null });
 
     success = true;
 
