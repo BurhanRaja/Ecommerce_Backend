@@ -165,7 +165,7 @@ exports.updateUserAddress = async (req, res, next) => {
     userAddress = await Useraddress.findOneAndUpdate(
       {
         user_id: req.user.id,
-        "addresses._id": req.params.id
+        "addresses._id": req.params.id,
       },
       { $set: { "addresses.$": updUserAdd } }
     );
@@ -184,3 +184,33 @@ exports.updateUserAddress = async (req, res, next) => {
 };
 
 // Delete Address
+exports.deleteAddress = async (req, res, next) => {
+  let success = true;
+
+  try {
+    let address = await Useraddress.find({ user_id: req.user.id });
+
+    if (!address) {
+      return res.status(404).send({ success, message: "404 Not Found." });
+    }
+
+    address = await Useraddress.findOneAndUpdate(
+      {
+        user_id: req.user.id,
+      },
+      { $pull: { addresses: { _id: req.params.id } } }
+    );
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      address,
+    });
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal Server Error." });
+  }
+};
