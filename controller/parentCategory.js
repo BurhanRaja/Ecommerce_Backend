@@ -1,5 +1,5 @@
-const { validationResult } = require("express-validator");
 const ParentCategory = require("../model/Parentcategory");
+const { validateReq } = require("../utils/vaidation");
 
 // Get Parent Categories
 exports.getAllParentCategories = async (req, res, next) => {
@@ -26,10 +26,7 @@ exports.getAllParentCategories = async (req, res, next) => {
 exports.createParentCategory = async (req, res, next) => {
   let success = false;
 
-  let error = validationResult(req);
-  if (!error.isEmpty()) {
-    return res.status(400).send({ error: error.array() });
-  }
+  validateReq(req, res);
 
   try {
     const { name, description } = req.body;
@@ -64,10 +61,7 @@ exports.createParentCategory = async (req, res, next) => {
 exports.updateParentCategory = async (req, res, next) => {
   let success = false;
 
-  let error = validationResult(req);
-  if (!error.isEmpty()) {
-    return res.status(400).send({ error: error.array() });
-  }
+  validateReq(req, res);
 
   try {
     const { name, description } = req.body;

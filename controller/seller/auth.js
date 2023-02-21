@@ -1,16 +1,13 @@
-const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Seller = require("../../model/Seller");
+const { validateReq } = require("../../utils/vaidation");
 
 // Seller Register
 exports.register = async (req, res, next) => {
   let success = false;
 
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).send({ errors: errors.array() });
-  }
+  validateReq(req, res);
 
   try {
     const { fname, lname, email, password, admin } = req.body;
@@ -62,10 +59,7 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   let success = false;
 
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).send({ errors: errors.array() });
-  }
+  validateReq(req, res);
 
   try {
     const { email, password } = req.body;

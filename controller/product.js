@@ -1,4 +1,4 @@
-const { validationResult } = require("express-validator");
+const {validateReq} = require("../utils/vaidation");
 const Product = require("../model/Product");
 
 // Get Products from a seller
@@ -19,10 +19,8 @@ exports.getProduct = async (req, res, next) => {
 // Create Product
 exports.createProduct = async (req, res, next) => {
   let success = false;
-  const error = validationResult(req);
-  if (!error.isEmpty()) {
-    return res.status(400).send({ error: error.array() });
-  }
+  
+  validateReq
 
   try {
     const {
@@ -66,6 +64,9 @@ exports.createProduct = async (req, res, next) => {
 // Update Product
 exports.updateProduct = async (req, res, next) => {
   let success = false;
+
+  validateReq(req, res);
+  
   try {
     const {
       name,

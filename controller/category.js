@@ -1,5 +1,5 @@
-const { validationResult } = require("express-validator");
 const Category = require("../model/Category");
+const { validateReq } = require("../utils/vaidation");
 
 // Get All Categories
 exports.getAllCategories = async (req, res, next) => {
@@ -26,10 +26,7 @@ exports.getAllCategories = async (req, res, next) => {
 exports.createCategory = async (req, res, next) => {
   let success = false;
 
-  let error = validationResult(req);
-  if (!error.isEmpty()) {
-    return res.status(400).send({ error: error.array() });
-  }
+  validateReq(req, res);
 
   try {
     const { name, description, parent_id } = req.body;
@@ -64,10 +61,7 @@ exports.createCategory = async (req, res, next) => {
 exports.updateCategory = async (req, res, next) => {
   let success = false;
 
-  let error = validationResult(req);
-  if (!error.isEmpty()) {
-    return res.status(400).send({ error: error.array() });
-  }
+  validateReq(req, res);
 
   try {
     const { name, description, parent_id } = req.body;

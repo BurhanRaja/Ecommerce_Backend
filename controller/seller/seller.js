@@ -1,4 +1,5 @@
 const Seller = require("../../model/Seller");
+const { validateReq } = require("../../utils/vaidation");
 
 // Get Seller
 exports.getSeller = async (req, res, next) => {
@@ -23,6 +24,9 @@ exports.getSeller = async (req, res, next) => {
 // Update Seller
 exports.updateSeller = async (req, res, next) => {
   let success = false;
+
+  validateReq(req, res);
+
   try {
     const { fname, lname, email, password, admin } = req.body;
     const updSeller = {};

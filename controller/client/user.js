@@ -1,5 +1,6 @@
 const User = require("../../model/User");
 const bcrypt = require("bcrypt");
+const { validateReq } = require("../../utils/vaidation");
 
 // Get User
 exports.getUser = async (req, res, next) => {
@@ -25,6 +26,9 @@ exports.getUser = async (req, res, next) => {
 // Update User
 exports.updateUser = async (req, res, next) => {
   let success = false;
+
+  validateReq(req, res);
+
   try {
     const { fname, lname, email, password, phone } = req.body;
 

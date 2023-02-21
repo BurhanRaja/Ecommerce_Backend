@@ -1,4 +1,4 @@
-const { validationResult } = require("express-validator");
+const { validateReq } = require("../../utils/vaidation");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../../model/User");
@@ -7,10 +7,7 @@ const User = require("../../model/User");
 exports.register = async (req, res, next) => {
   let success = false;
 
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).send({ errors: errors.array() });
-  }
+  validateReq(req, res);
 
   try {
     const { fname, lname, email, password, phone } = req.body;
@@ -62,10 +59,7 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   let success = false;
 
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).send({ errors: errors.array() });
-  }
+  validateReq(req, res);
 
   try {
     const { email, password } = req.body;

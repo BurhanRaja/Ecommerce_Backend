@@ -1,6 +1,5 @@
-const { validationResult } = require("express-validator");
 const Useraddress = require("../../model/Useraddress");
-const User = require("../../model/User");
+const { validateReq } = require("../../utils/vaidation");
 
 // Get UserAddress
 exports.getUserAdresses = async (req, res, next) => {
@@ -25,10 +24,7 @@ exports.getUserAdresses = async (req, res, next) => {
 exports.createUserAddress = async (req, res, next) => {
   let success = false;
 
-  let error = validationResult(req);
-  if (!error.isEmpty()) {
-    return res.status(400).send({ success, error: error.array() });
-  }
+  validateReq(req, res);
 
   try {
     const {
@@ -73,10 +69,7 @@ exports.createUserAddress = async (req, res, next) => {
 exports.addAddress = async (req, res, next) => {
   let success = true;
 
-  let error = validationResult(req);
-  if (!error.isEmpty()) {
-    return res.status(400).send({ success, error: error.array() });
-  }
+  validateReq(req, res);
 
   try {
     const {
@@ -130,10 +123,7 @@ exports.addAddress = async (req, res, next) => {
 exports.updateUserAddress = async (req, res, next) => {
   let success = false;
 
-  let error = validationResult(req);
-  if (!error.isEmpty()) {
-    return res.status(400).send({ success, error: error.array() });
-  }
+  validateReq(req, res);
 
   try {
     const {
