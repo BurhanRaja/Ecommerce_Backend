@@ -1,6 +1,7 @@
 const Sellerinfo = require("../../model/Sellerinfo");
 const { validateReq } = require("../../utils/vaidation");
 
+// Get Info
 exports.getInfo = async (req, res, next) => {
   let success = false;
 
@@ -24,6 +25,7 @@ exports.getInfo = async (req, res, next) => {
   }
 };
 
+// Create Info
 exports.createInfo = async (req, res, next) => {
   let success = false;
 
@@ -40,7 +42,7 @@ exports.createInfo = async (req, res, next) => {
       tax_info,
     } = req.body;
 
-    let info = Sellerinfo.find({ company_name: company_name });
+    let info = await Sellerinfo.find({ company_name: company_name });
 
     if (info) {
       return res
@@ -55,6 +57,7 @@ exports.createInfo = async (req, res, next) => {
       phone,
       identity_proof,
       tax_info,
+      seller_id: req.seller.id,
     });
 
     success = true;
@@ -70,6 +73,7 @@ exports.createInfo = async (req, res, next) => {
   }
 };
 
+// Update Info
 exports.updateInfo = async (req, res, next) => {
   let success = false;
 
@@ -103,12 +107,43 @@ exports.updateInfo = async (req, res, next) => {
       });
     }
 
-    info = await Sellerinfo.findByIdAndUpdate(
-      req.params.id,
-      { $set: updInfo },
-      { new: true }
-    );
+    info = await Sellerinfo.findByIdAndUpdate(req.params.id, { $set: updInfo });
 
-    
-  } catch (err) {}
+    success = true;
+
+    return res.status(200).send({
+      success,
+      info,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal Server Error." });
+  }
+};
+
+// Delete Info
+exports.deleteInfo = async (req, res, next) => {
+  let success = false;
+
+  try {
+    let info = await Sellerinfo.findById(req.params.id);
+
+    if (!info) {
+      return res.status(404).send({ success, message: "404 Not Found" });
+    }
+
+    info = await Sellerinfo.findByIdAndDelete(req.params.id, { $set: null });
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      info,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal Server Error." });
+  }
 };

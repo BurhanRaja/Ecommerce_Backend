@@ -1,13 +1,13 @@
 const Seller = require("../../model/Seller");
 const { validateReq } = require("../../utils/vaidation");
+const bcrypt = require("bcrypt");
 
 // Get Seller
 exports.getSeller = async (req, res, next) => {
   let success = false;
 
   try {
-    const sellerId = req.body.id;
-    const seller = Seller.findById(sellerId).select("-password");
+    const seller = await Seller.findById(req.seller.id).select("-password");
     success = true;
 
     res.send({
@@ -29,24 +29,28 @@ exports.updateSeller = async (req, res, next) => {
 
   try {
     const { fname, lname, email, password, admin } = req.body;
+
+    console.log(req.body);
+
     const updSeller = {};
 
     if (fname) updSeller.fname = fname;
     if (lname) updSeller.lname = lname;
     if (email) updSeller.email = email;
-    if (password) updSeller.password = password;
-    if (admin) updSeller.admin = admin;
+    if (admin === false || admin === true) updSeller.admin = admin;
 
-    let seller = await Seller.findById(req.params.id);
+    let seller = await Seller.findById(req.seller.id);
+
     if (!seller) {
       return res.status(404).send({ success, error: "404 Not Found." });
     }
 
-    seller = await Seller.findByIdAndUpdate(
-      req.params.id,
-      { $set: updSeller },
-      { new: true }
-    );
+    const salt = await bcrypt.genSalt(10);
+    const securePassword = await bcrypt.hash(password, salt);
+
+    if (password) updSeller.password = securePassword;
+
+    seller = await Seller.findByIdAndUpdate(req.seller.id, { $set: updSeller });
     success = true;
 
     return res.status(200).send({
@@ -63,12 +67,12 @@ exports.deleteSeller = async (req, res, next) => {
   let success = false;
 
   try {
-    let seller = await Seller.findById(req.params.id);
+    let seller = await Seller.findById(req.seller.id);
     if (!seller) {
       return res.status(404).send({ success, error: "404 Not Found." });
     }
 
-    seller = await Seller.findOneAndDelete(req.params.id, { $set: null });
+    seller = await Seller.findOneAndDelete(req.seller.id, { $set: null });
     success = true;
 
     return res.status(200).send({

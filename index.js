@@ -20,6 +20,7 @@ app.use("/api/parentcategory", require("./routes/parentcategory/index"));
 app.use("/api/category", require("./routes/category/index"));
 app.use("/api/product", require("./routes/product/index"));
 app.use("/api/user/address", require("./routes/useraddress/index"));
+app.use("/api/seller/info", require("./routes/sellerinfo/index"));
 
 // TODO:
 

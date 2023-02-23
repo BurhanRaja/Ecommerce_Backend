@@ -2,6 +2,12 @@ const express = require("express");
 const sellerAuth = require("../../controller/seller/auth");
 const product = require("../../controller/product");
 const { body } = require("express-validator");
+const checkSeller = require("../../middleware/checkSeller");
+const {
+  getSeller,
+  updateSeller,
+  deleteSeller,
+} = require("../../controller/seller/seller");
 
 const router = express.Router();
 
@@ -31,36 +37,24 @@ router.post(
   sellerAuth.login
 );
 
+router.get("/", checkSeller, getSeller);
 
-// name,
-// images,
-// description,
-// custom_information,
-// price,
-// colors,
-// sizes,
-// info_type,
-// quantity,
-
-// ROUTE-3: Products
-router.post(
-  "/create/product",
+router.put(
+  "/update",
+  checkSeller,
   [
-    body("name", "Please enter at least 2 characters").isLength({ min: 2 }),
-    body("images", "Please add images").isArray(),
-    body("description", "Please enter at least 10 characters").isLength({
-      min: 10,
+    body("fname", "Please enter at least 2 characters in first name.").isLength(
+      { min: 2 }
+    ),
+    body("lname", "Please enter at least 2 characters in last name").isLength({
+      min: 2,
     }),
-    body("custom_information", "Please enter at least 10 characters").isLength({
-      min: 10,
-    }),
-    body("price", "Please add Price").isNumeric(),
-    body("colors", "Please add a colors.").isArray(),
-    body("sizes", "Please add a sizes.").isArray(),
-    body("quantity", "Please a available quantity.").isNumeric(),
+    body("email", "Please enter correct email.").isEmail(),
+    body("password", "Please enter a strong password").isLength({ min: 5 }),
   ],
-  product.createProduct
+  updateSeller
 );
 
+router.delete("/delete", checkSeller, deleteSeller);
 
 module.exports = router;
