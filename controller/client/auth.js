@@ -2,6 +2,7 @@ const { validateReq } = require("../../utils/vaidation");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../../model/User");
+const { SECRET_KEY } = require("../../config/config");
 
 // User Register
 exports.register = async (req, res, next) => {
@@ -37,7 +38,7 @@ exports.register = async (req, res, next) => {
       },
     };
 
-    let privateKey = process.env.SECRET_KEY;
+    let privateKey = SECRET_KEY;
     let authToken = jwt.sign(data, privateKey);
 
     success = true;
@@ -84,7 +85,7 @@ exports.login = async (req, res, next) => {
       },
     };
 
-    let privateKey = process.env.SECRET_KEY;
+    let privateKey = SECRET_KEY;
     let authToken = jwt.sign(data, privateKey);
 
     success = true;

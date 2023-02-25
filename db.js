@@ -6,17 +6,7 @@ const connectToMongoDB = () => {
   mongoose.connect(
     mongoURI,
     () => {
-      console.log("Connected to Mongo");
-    },
-    {
-      useFindAndModify: false,
-      useUnifiedTopology: true,
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } },
-      replset: {
-        socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 },
-      },
+      console.log("Connected to Mongo.");
     },
     (err) => {
       if (err) return console.log("Error: ", err);
@@ -27,6 +17,5 @@ const connectToMongoDB = () => {
     }
   );
 };
-
 
 module.exports = connectToMongoDB;
