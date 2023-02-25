@@ -19,4 +19,10 @@ router.post(
 // ROUTE-2: Get Categories
 router.get("/", category.getAllCategories);
 
+//
+router.put("/update/:id", category.updateCategory);
+
+//
+router.delete("/delete/:id", category.deleteCategory);
+
 module.exports = router;

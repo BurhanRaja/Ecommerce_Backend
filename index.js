@@ -14,13 +14,17 @@ app.get("/", (req, res) => {
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/client", require("./routes/client/index"));
-app.use("/api/seller", require("./routes/seller/index"));
-app.use("/api/parentcategory", require("./routes/parentcategory/index"));
-app.use("/api/category", require("./routes/category/index"));
-app.use("/api/product", require("./routes/product/index"));
-app.use("/api/user/address", require("./routes/useraddress/index"));
-app.use("/api/seller/info", require("./routes/sellerinfo/index"));
+app.use("/api/client", require("./routes/client/index")); // Client or User
+app.use("/api/user/address", require("./routes/useraddress/index")); // User Address
+
+app.use("/api/seller", require("./routes/seller/index")); // Admin or company or seller
+app.use("/api/seller/info", require("./routes/sellerinfo/index")); // Seller Info
+
+app.use("/api/parentcategory", require("./routes/parentcategory/index")); // Parent Category
+app.use("/api/category", require("./routes/category/index")); // Category
+app.use("/api/subcategory", require("./routes/subcategory/index")); // Subcategory
+
+app.use("/api/product", require("./routes/product/index")); // Products
 
 // TODO:
 
