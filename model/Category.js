@@ -14,8 +14,8 @@ const CategorySchema = new Schema(
     parent_id: {
       type: Schema.Types.ObjectId,
       ref: "parentcategories",
-      required: true
-    }
+      required: true,
+    },
   },
   {
     timestamps: true,

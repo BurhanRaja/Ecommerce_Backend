@@ -17,4 +17,17 @@ router.post(
 // ROUTE-2: Get Categories
 router.get("/", pCategory.getAllParentCategories);
 
+router.put(
+  "/update/:id",
+  [
+    body("name", "Please enter at least 4 characters").isLength({ min: 4 }),
+    body("description", "Please enter at least 10 characters").isLength({
+      min: 10,
+    }),
+  ],
+  pCategory.updateParentCategory
+);
+
+router.delete("/delete/:id", pCategory.deleteCategory);
+
 module.exports = router;

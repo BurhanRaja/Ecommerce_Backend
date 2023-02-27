@@ -1,11 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const connectToMongoDB = require("./db");
+const { PORT } = require("./config/config");
 
 connectToMongoDB();
 
 const app = express();
-const port = 3000;
+const port = PORT;
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -25,6 +26,19 @@ app.use("/api/category", require("./routes/category/index")); // Category
 app.use("/api/subcategory", require("./routes/subcategory/index")); // Subcategory
 
 app.use("/api/product", require("./routes/product/index")); // Products
+
+// TODO next:
+// Do Cascading 
+
+// Parent Category - Category - Sub Category
+
+// Category - Sub Category - Product
+
+// Seller - Product
+
+// User - User Address
+
+// Seller - Seller Info
 
 // TODO:
 
@@ -95,5 +109,5 @@ app.use("/api/product", require("./routes/product/index")); // Products
 // Get Payment after client Pay
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Example app listening on port http://localhost:${port}`);
 });

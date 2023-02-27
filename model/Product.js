@@ -39,6 +39,11 @@ const ProductSchema = new Schema(
       ref: "categories",
       required: true,
     },
+    sub_category_id: {
+      type: Schema.Types.ObjectId,
+      ref: "subcategories",
+      required: true
+    },
     quantity: {
       type: Number,
       required: true,

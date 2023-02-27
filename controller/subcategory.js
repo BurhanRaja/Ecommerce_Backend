@@ -8,8 +8,6 @@ exports.getSubCategories = async (req, res, next) => {
   try {
     let subCat = await Subcategory.find({ category_id: req.params.catid });
 
-    console.log(subCat);
-
     success = true;
 
     return res.status(200).send({
@@ -37,7 +35,7 @@ exports.createSubCategory = async (req, res, next) => {
       category_id: category_id,
     });
 
-    if (!subCat) {
+    if (subCat) {
       return res.status(400).send({
         success: false,
         message: "Sub-category in Category Already Exists.",
@@ -85,8 +83,7 @@ exports.updateSubCategory = async (req, res, next) => {
     }
 
     subCat = await Subcategory.findByIdAndUpdate(
-      req,
-      params.id,
+      req.params.id,
       { $set: updSubCat },
       { new: true }
     );
@@ -98,6 +95,7 @@ exports.updateSubCategory = async (req, res, next) => {
       subCat,
     });
   } catch (err) {
+    console.log(err)
     return res
       .status(500)
       .send({ success: false, message: "Internal Server Error." });
