@@ -5,6 +5,11 @@ const SubCategorySchema = new Schema(
   {
     name: String,
     description: String,
+    parent_category_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Parentcategory",
+      required: true
+    },
     category_id: {
       type: Schema.Types.ObjectId,
       ref: "Category",

@@ -34,6 +34,11 @@ const ProductSchema = new Schema(
       ref: "sellers",
       required: true,
     },
+    parent_category_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Parentcategory",
+      required: true
+    },
     category_id: {
       type: Schema.Types.ObjectId,
       ref: "Category",

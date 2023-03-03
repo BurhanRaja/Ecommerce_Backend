@@ -1,4 +1,4 @@
-const {validateReq} = require("../utils/vaidation");
+const { validateReq } = require("../utils/vaidation");
 const Product = require("../model/Product");
 
 // Get Products from a seller
@@ -19,8 +19,8 @@ exports.getProduct = async (req, res, next) => {
 // Create Product
 exports.createProduct = async (req, res, next) => {
   let success = false;
-  
-  validateReq
+
+  validateReq;
 
   try {
     const {
@@ -34,6 +34,8 @@ exports.createProduct = async (req, res, next) => {
       info_type,
       quantity,
       category_id,
+      sub_category_id,
+      parent_category_id,
     } = req.body;
 
     const product = await Product.create({
@@ -48,6 +50,8 @@ exports.createProduct = async (req, res, next) => {
       quantity,
       seller_id: req.seller.id,
       category_id,
+      sub_category_id,
+      parent_category_id,
     });
 
     success = true;
@@ -66,7 +70,7 @@ exports.updateProduct = async (req, res, next) => {
   let success = false;
 
   validateReq(req, res);
-  
+
   try {
     const {
       name,
@@ -78,6 +82,9 @@ exports.updateProduct = async (req, res, next) => {
       sizes,
       info_type,
       quantity,
+      category_id,
+      sub_category_id,
+      parent_category_id,
     } = req.body;
 
     const updProd = {};
@@ -91,6 +98,9 @@ exports.updateProduct = async (req, res, next) => {
     if (sizes) updProd.sizes = sizes;
     if (info_type) updProd.info_type = info_type;
     if (quantity) updProd.quantity = quantity;
+    if (category_id) updProd.category_id = category_id;
+    if (sub_category_id) updProd.sub_category_id = sub_category_id;
+    if (parent_category_id) updProd.parent_category_id = parent_category_id;
 
     let product = await Product.findById(req.params.id);
     if (!product) {

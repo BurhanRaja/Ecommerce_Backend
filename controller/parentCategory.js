@@ -110,7 +110,7 @@ exports.deleteCategory = async (req, res, next) => {
       });
     }
 
-    pCategory = await ParentCategory.findByIdAndDelete(req.params.id, {
+    pCategory = await ParentCategory.findByOneAndDelete(req.params.id, {
       $set: null,
     });
 

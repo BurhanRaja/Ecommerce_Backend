@@ -28,7 +28,7 @@ exports.createSubCategory = async (req, res, next) => {
   validateReq(req, res);
 
   try {
-    const { name, description, category_id } = req.body;
+    const { name, description, category_id, parent_category_id } = req.body;
 
     let subCat = await Subcategory.findOne({
       name: name,
@@ -46,6 +46,7 @@ exports.createSubCategory = async (req, res, next) => {
       name,
       description,
       category_id,
+      parent_category_id
     });
 
     success = true;
@@ -68,13 +69,14 @@ exports.updateSubCategory = async (req, res, next) => {
   validateReq(req, res);
 
   try {
-    const { name, description, category_id } = req.body;
+    const { name, description, category_id, parent_category_id } = req.body;
 
     let updSubCat = {};
 
     if (name) updSubCat.name = name;
     if (description) updSubCat.description = description;
     if (category_id) updSubCat.category_id = category_id;
+    if (parent_category_id) updSubCat.parent_category_id = parent_category_id;
 
     let subCat = await Subcategory.findById(req.params.id);
 
