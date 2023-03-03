@@ -9,7 +9,13 @@ const DiscountSchemas = new Schema(
     activeTill: Date,
     seller_id: {
         type: Schema.Types.ObjectId,
-        ref: "Seller"
+        ref: "Seller",
+        required: true
+    },
+    product_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Product",
+      required: true
     }
   },
   {

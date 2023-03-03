@@ -27,87 +27,28 @@ app.use("/api/subcategory", require("./routes/subcategory/index")); // Subcatego
 
 app.use("/api/product", require("./routes/product/index")); // Products
 
-// TODO next:
-// Do Cascading 
-
-// Parent Category - Category - Sub Category
-
-// Category - Sub Category - Product
-
-// Seller - Product
-
-// User - User Address
-
-// Seller - Seller Info
-
-// TODO:
-
-// Database Tables:-
-
-// Products
-// Categories
-// Sub-Categories
-// User
-// User Address
-// Seller
-// Company
-// Orders
-// Discount
-
-// Client API
-
-// On Every Purchase send a notification
-
-// Authentication
-// Login
-// Register
-
-// Get User Related Details
-// Get User Profile
-// Get the Past Purchase
-
-// Fashion and Electronics
-// Get All Items
-// Get Filtered Items based on sub-category like bags, watches, men, women
-// Get Filtered Items based on Price
-// Get Top Products
-// Get Featured Products
-// Get Individual Item Card, Reviews, Description
-
-// Categories
-// Get All Categories
-// Get sub-category of a particular Category
-
-// Cart
-// Post/Add product to cart
-// Get the Products for Cart
-// Get the calculated amount by adding gst and shipping charges
-
-// Buy Now
-// Flow :- Add to Cart, Redirect to Checkout
-// Get Existing Address if yes OR display a form to add address.
-// Payment Integration
-
-// After Payment
-// POST/Add the order to the Order table.
-
-// Seller API
-
-// Authentication
-// Register a Brand or Company
-// Login
-
-// Products
-// CRUD on Products
-// CRUD on Sub-categories
-
-// Orders
-// Get All Orders that you get
-// POST/Add to order (Delivered or Pending)
-
-// Earnings
-// Get Payment after client Pay
-
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
 });
+
+
+
+
+// TODO:
+
+// ? Cart ---------------------
+// Add to Cart - 
+// If is_active is false or null with the user_id 
+// then Create Cart
+// else Add to Cart
+
+// RUD of Cart
+
+// Update the product using product id in cart itself
+
+// ? Cart --------------------
+
+// ? Order ------------------
+// Order Schema
+// Create Order when checkout
+// RUD of Order
