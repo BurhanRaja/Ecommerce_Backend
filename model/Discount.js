@@ -7,9 +7,9 @@ const DiscountSchemas = new Schema(
     discount_percentage: Number,
     active: Boolean,
     activeTill: Date,
-    comapny_id: {
+    seller_id: {
         type: Schema.Types.ObjectId,
-        ref: "companys"
+        ref: "Seller"
     }
   },
   {

@@ -1,4 +1,5 @@
 const { Schema, default: mongoose } = require("mongoose");
+const Product = require("./Product");
 
 const SubCategorySchema = new Schema(
   {
@@ -6,7 +7,7 @@ const SubCategorySchema = new Schema(
     description: String,
     category_id: {
       type: Schema.Types.ObjectId,
-      ref: "categorys",
+      ref: "Category",
       required: true,
     },
   },
@@ -14,5 +15,10 @@ const SubCategorySchema = new Schema(
     timestamps: true,
   }
 );
+
+SubCategorySchema.pre("findOneAndDelete", async function (subcategory, next) {
+  await Product.deleteMany({ sub_category_id: subcategory._id });
+  next();
+});
 
 module.exports = mongoose.model("Subcategory", SubCategorySchema);

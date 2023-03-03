@@ -112,7 +112,7 @@ exports.deleteSubCategory = async (req, res, next) => {
       return res.status(404).send({ success, message: "404 Not Found." });
     }
 
-    subCat = await Subcategory.findByIdAndDelete(req.params.id, { $set: null });
+    subCat = await Subcategory.findOneAndDelete(req.params.id, { $set: null });
 
     success = true;
 

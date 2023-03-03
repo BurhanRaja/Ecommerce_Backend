@@ -5,6 +5,7 @@ const UserAddressSchema = new Schema(
     user_id: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: "User"
     },
     addresses: {
       type: [

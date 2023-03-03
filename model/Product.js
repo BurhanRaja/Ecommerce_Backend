@@ -36,12 +36,12 @@ const ProductSchema = new Schema(
     },
     category_id: {
       type: Schema.Types.ObjectId,
-      ref: "categories",
+      ref: "Category",
       required: true,
     },
     sub_category_id: {
       type: Schema.Types.ObjectId,
-      ref: "subcategories",
+      ref: "Sub_Category",
       required: true
     },
     quantity: {
@@ -51,7 +51,7 @@ const ProductSchema = new Schema(
     reviews: [{ body: String, rating: Number, date: Date, author: String }],
     discount_id: {
       type: Schema.Types.ObjectId,
-      ref: "discounts",
+      ref: "Discount",
     },
   },
   {

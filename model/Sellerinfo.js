@@ -28,7 +28,7 @@ const SellerInfoSchema = new Schema(
     },
     seller_id: {
       type: Schema.Types.ObjectId,
-      ref: "sellers",
+      ref: "Seller",
       required: true,
     },
   },

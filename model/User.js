@@ -1,4 +1,5 @@
 const { Schema, default: mongoose } = require("mongoose");
+const Useraddress = require("./Useraddress");
 
 const UserSchema = new Schema(
   {
@@ -27,5 +28,10 @@ const UserSchema = new Schema(
     timestamps: true,
   }
 );
+
+UserSchema.post('findOneAndDelete', async function(user, next) {
+  await Useraddress.deleteOne({user_id: user._id});
+  next();
+});
 
 module.exports = mongoose.model("User", UserSchema);
