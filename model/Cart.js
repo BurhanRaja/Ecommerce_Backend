@@ -1,4 +1,4 @@
-let { Schema, default: mongoosese } = require("mongoose");
+let { Schema, default: mongoose } = require("mongoose");
 
 const CartSchema = new Schema({
     user_id: {
@@ -22,3 +22,5 @@ const CartSchema = new Schema({
         required: true
     }
 });
+
+module.exports = mongoose.model("Cart", CartSchema);

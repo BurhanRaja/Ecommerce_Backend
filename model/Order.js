@@ -3,26 +3,19 @@ const { Schema, default: mongoose } = require("mongoose");
 const OrderSchema = new Schema({
   user_id: {
     type: Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
-  items: [
-    {
-      product_id: { type: Schema.Types.ObjectId, ref: "Product" },
-      color: String,
-      size: String,
-      info_type: String,
-      qty: { type: Number },
-      price: {
-        type: Schema.Types.Decimal128,
-        default: 0,
-      },
-      seller_info_id: { type: Schema.Types.ObjectId, ref: "Sellerinfo" },
-      image: {
-        type: String,
-        default: 1,
-      },
-    },
-  ],
+  cart_id: {
+    type: Schema.Types.ObjectId,
+    ref: "Cart",
+    required: true,
+  },
+  address_id: {
+    type: Schema.Types.ObjectId,
+    ref: "Useraddress",
+    required: true,
+  }
 });
 
 

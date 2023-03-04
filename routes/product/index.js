@@ -5,6 +5,7 @@ const checkSeller = require("../../middleware/checkSeller");
 
 const router = express.Router();
 
+// Admin
 // ROUTE-1: Get Product
 router.get("/", checkSeller, product.getProduct);
 
@@ -52,5 +53,10 @@ router.put(
 
 // ROUTE-4: Delete Product
 router.delete("/delete/:id", checkSeller, product.deleteProduct);
+
+
+// Client
+// ROUTE-1: Get All Products
+router.get("/all/products", product.getAllProducts);
 
 module.exports = router;

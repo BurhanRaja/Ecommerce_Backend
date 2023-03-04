@@ -52,3 +52,16 @@ app.listen(port, () => {
 // Order Schema
 // Create Order when checkout
 // RUD of Order
+
+
+// ! Completed
+// Seller
+// User
+
+// Seller Info
+// User Address
+
+// Parent Category
+// Category
+// Subcategory
+// Product

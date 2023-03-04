@@ -37,7 +37,7 @@ const ProductSchema = new Schema(
     parent_category_id: {
       type: Schema.Types.ObjectId,
       ref: "Parentcategory",
-      required: true
+      required: true,
     },
     category_id: {
       type: Schema.Types.ObjectId,
@@ -47,14 +47,25 @@ const ProductSchema = new Schema(
     sub_category_id: {
       type: Schema.Types.ObjectId,
       ref: "Sub_Category",
-      required: true
+      required: true,
     },
     quantity: {
       type: Number,
       required: true,
     },
-    reviews: [{ body: String, rating: Number, date: Date, author: String }],
-    discount_id: {
+    reviews: [
+      {
+        body: String,
+        ratings: Number,
+        date: Date,
+        user_id: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+      },
+    ],
+    discount: {
       type: Schema.Types.ObjectId,
       ref: "Discount",
     },

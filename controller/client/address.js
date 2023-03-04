@@ -82,7 +82,7 @@ exports.addAddress = async (req, res, next) => {
       address_type,
     } = req.body;
 
-    let address = await Useraddress.find({
+    let address = await Useraddress.findOne({
       id: req.params.id,
       user_id: req.user.id,
     });

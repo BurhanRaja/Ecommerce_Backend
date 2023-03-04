@@ -1,7 +1,7 @@
 const { validateReq } = require("../utils/vaidation");
 const Product = require("../model/Product");
 
-// Get Products from a seller
+// Admin Side
 exports.getProduct = async (req, res, next) => {
   let success = false;
   try {
@@ -151,5 +151,124 @@ exports.deleteProduct = async (req, res, next) => {
     });
   } catch (error) {
     res.status(500).send({ success: false, error: "Internal Server Error." });
+  }
+};
+
+// Client Side
+
+// Get All Products Based on Filters
+exports.getAllProducts = async (req, res, next) => {
+  let success = false;
+  try {
+    let filters = req.query;
+    let updFilters = {};
+    let price_range = [];
+
+    if (filters.seller) {
+      updFilters.seller_id = { $in: filters.seller.split(",") };
+    }
+    if (filters.parentcategory) {
+      updFilters.parent_category_id = filters.parentcategory;
+    }
+    if (filters.category) {
+      updFilters.category_id = { $in: filters.category.split(",") };
+    }
+    if (filters.subcategory) {
+      updFilters.sub_category_id = { $in: filters.subcategory.split(",") };
+    }
+    if (filters.price) {
+      price_range = filters.price_range.split(",");
+      updFilters.price = {
+        $lte: Number(price_range[0]) || 1000000,
+        $gte: Number(price_range[1]) || 0,
+      };
+    }
+    if (filters.rating) {
+      updFilters["review.ratings"] = { $lte: Number(filters.rating) };
+    }
+
+    let products = await Product.find(updFilters).populate({
+      path: "dicount",
+      model: "Dicount",
+    });
+
+    if (!products) {
+      return res.status(404).send({ success, message: "404 Not Found" });
+    }
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      products,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, error: "Internal Server Error" });
+  }
+};
+
+// Add Rating Only for authenticated user
+exports.addRating = async (req, res ,next) => {
+  let success = false;
+  try {
+
+    let rating = Product.findOne({
+      _id: req.params.id,
+      rating: {user_id: req.user.id}
+    });
+
+    if (rating) {
+      return res.status(400).send({success, message: "Rating already added."});
+    }
+
+    rating = Product.findOne({});
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      rating
+    });
+
+  } catch (err) {
+    
+  }
+}
+
+
+// For All
+exports.singleProduct = async (req, res, next) => {
+  let success = false;
+
+  try {
+    let product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).send({ success, message: "404 Not Found" });
+    }
+
+    product = await Product.findById(req.params.id)
+      .populate({
+        path: "discount",
+        model: "Discount",
+      })
+      .populate({
+        path: "seller_id",
+        model: "Seller",
+      })
+      .exec();
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      product,
+    });
+  } catch (err) {
+    return res
+      .status(200)
+      .send({ success: false, error: "Internal Server Error" });
   }
 };
