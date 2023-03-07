@@ -56,6 +56,7 @@ exports.createSubCategory = async (req, res, next) => {
       subCat,
     });
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ success: false, message: "Internal Server Error." });

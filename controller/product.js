@@ -1,8 +1,8 @@
 const { validateReq } = require("../utils/vaidation");
 const Product = require("../model/Product");
 
-// Admin Side
-exports.getProduct = async (req, res, next) => {
+// Admin Side ----------------------------------------------------------------------------
+exports.getProducts = async (req, res, next) => {
   let success = false;
   try {
     const products = Product.find({ seller_id: req.seller.id });
@@ -49,6 +49,7 @@ exports.createProduct = async (req, res, next) => {
       info_type,
       quantity,
       seller_id: req.seller.id,
+      seller_info: req.seller.sellerinfo._id,
       category_id,
       sub_category_id,
       parent_category_id,
@@ -111,11 +112,7 @@ exports.updateProduct = async (req, res, next) => {
       return res.status(401).send("Unauthorized Access!");
     }
 
-    product = await Product.findByIdAndUpdate(
-      req.params.id,
-      { $set: updProd },
-      { new: true }
-    );
+    product = await Product.findByIdAndUpdate(req.params.id, { $set: updProd });
     success = true;
 
     return res.status(200).send({
@@ -154,8 +151,7 @@ exports.deleteProduct = async (req, res, next) => {
   }
 };
 
-// Client Side
-
+// Client Side ---------------------------------------------------------------------------
 // Get All Products Based on Filters
 exports.getAllProducts = async (req, res, next) => {
   let success = false;
@@ -190,6 +186,9 @@ exports.getAllProducts = async (req, res, next) => {
     let products = await Product.find(updFilters).populate({
       path: "dicount",
       model: "Dicount",
+    }).populate({
+      path: "seller_info",
+      model: "Sellerinfo"
     });
 
     if (!products) {
@@ -210,35 +209,124 @@ exports.getAllProducts = async (req, res, next) => {
 };
 
 // Add Rating Only for authenticated user
-exports.addRating = async (req, res ,next) => {
+exports.addReview = async (req, res, next) => {
   let success = false;
   try {
+    const { content, ratings } = req.body;
 
-    let rating = Product.findOne({
-      _id: req.params.id,
-      rating: {user_id: req.user.id}
+    let reviews = await Product.findOne({
+      id: req.params.id,
+      reviews: { user_id: req.user.id },
     });
 
-    if (rating) {
-      return res.status(400).send({success, message: "Rating already added."});
+    if (reviews) {
+      return res
+        .status(400)
+        .send({ success, message: "Rating already added." });
     }
 
-    rating = Product.findOne({});
+    reviews = await Product.findOneAndUpdate(
+      { id: req.params.id },
+      {
+        $push: {
+          reviews: {
+            content,
+            ratings,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            user_id: req.user.id,
+          },
+        },
+      }
+    );
 
     success = true;
 
     return res.status(200).send({
       success,
-      rating
+      reviews,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, error: "Internal Server Error." });
+  }
+};
+
+// Update Review
+exports.updateReview = async (req, res, next) => {
+  let success = false;
+  try {
+    const { content, ratings } = req.body;
+
+    let reviews = await Product.findOne({
+      id: req.params.id,
+      reviews: { user_id: req.user.id },
     });
 
+    if (!reviews) {
+      return res.status(404).send({ success, message: "404 Not Found." });
+    }
+
+    let updReviews = {};
+    if (content) updReviews.content = content;
+    if (ratings) updReviews.ratings = ratings;
+    updReviews.updated_at = new Date().toISOString();
+
+    reviews = await Product.findOneAndUpdate(
+      {
+        id: req.params.id,
+        "reviews.user_id": req.user.id,
+      },
+      { $set: { "reviews.$": updReviews } }
+    );
+
+    success = true;
+    return res.status(200).send({
+      success,
+      reviews,
+    });
   } catch (err) {
-    
+    return res
+      .status(500)
+      .send({ success: false, error: "Internal Server Error." });
   }
-}
+};
 
+// Delete Review
+exports.deleteReview = async (req, res, next) => {
+  let success = false;
+  try {
+    let reviews = await Product.findOne({
+      id: req.params.id,
+      reviews: { user_id: req.user.id },
+    });
 
-// For All
+    if (!reviews) {
+      return res.status(404).send({ success, message: "404 Not Found." });
+    }
+
+    reviews = await Product.findOneAndUpdate(
+      {
+        id: req.params.id,
+      },
+      { $pull: { reviews: { user_id: req.user.id } } }
+    );
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      reviews,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, error: "Internal Server Error." });
+  }
+};
+
+// For All ---------------------------------------------------------------
 exports.singleProduct = async (req, res, next) => {
   let success = false;
 
@@ -253,10 +341,9 @@ exports.singleProduct = async (req, res, next) => {
       .populate({
         path: "discount",
         model: "Discount",
-      })
-      .populate({
-        path: "seller_id",
-        model: "Seller",
+      }).populate({
+        path: "seller_info",
+        model: "Sellerinfo"
       })
       .exec();
 

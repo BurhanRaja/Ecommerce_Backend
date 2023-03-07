@@ -6,13 +6,14 @@ const ProductSchema = new Schema(
       type: String,
       required: true,
     },
-    images: {
+    images_info: {
       type: [
         {
           url: String,
           color: String,
-          size: [String],
+          size: String,
           info_type: String,
+          quantity: Number
         },
       ],
       required: true,
@@ -21,7 +22,6 @@ const ProductSchema = new Schema(
       type: String,
       required: true,
     },
-    custom_information: [String],
     price: {
       type: Schema.Types.Decimal128,
       required: true,
@@ -33,6 +33,10 @@ const ProductSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "sellers",
       required: true,
+    },
+    seller_info: {
+      type: Schema.Types.ObjectId,
+      ref: "Sellerinfo",
     },
     parent_category_id: {
       type: Schema.Types.ObjectId,
@@ -55,9 +59,10 @@ const ProductSchema = new Schema(
     },
     reviews: [
       {
-        body: String,
+        content: String,
         ratings: Number,
-        date: Date,
+        created_at: Date,
+        updated_at: Date,
         user_id: {
           type: Schema.Types.ObjectId,
           ref: "User",
