@@ -25,11 +25,11 @@ router.post(
   "/create",
   [
     body("name", "Please enter at least 2 characters").isLength({ min: 2 }),
-    body("images", "Please add images").isArray(),
+    body("images_info", "Please add images").isArray(),
     body("description", "Please enter at least 10 characters").isLength({
       min: 10,
     }),
-    body("custom_information", "Please enter at least 10 characters").isLength({
+    body("thumbnail", "Please enter at least 10 characters").isLength({
       min: 10,
     }),
     body("price", "Please add Price").isNumeric(),
@@ -46,11 +46,11 @@ router.put(
   "/update/:id",
   [
     body("name", "Please enter at least 2 characters").isLength({ min: 2 }),
-    body("images", "Please add images").isArray(),
+    body("images_info", "Please add images").isArray(),
     body("description", "Please enter at least 10 characters").isLength({
       min: 10,
     }),
-    body("custom_information", "Please enter at least 10 characters").isLength({
+    body("thumbnail", "Please enter at least 10 characters").isLength({
       min: 10,
     }),
     body("price", "Please add Price").isNumeric(),
@@ -70,13 +70,13 @@ router.delete("/delete/:id", checkSeller, deleteProduct);
 router.get("/all/products", getAllProducts);
 
 // ROUTE-2: Write a Review
-router.post("add/review", checkUser, addReview);
+router.post("/add/review", checkUser, addReview);
 
 // ROUTE-3: Update Review
 router.put("/update/review/:id", checkUser, updateReview);
 
 // ROUTE-4: Delete Review
-router.delete("/delete/review/:id", checkUser, deleteReview);
+router.delete("/delete/review/:id/:reviewid", checkUser, deleteReview);
 
 // For All
 router.get("/:id", singleProduct);

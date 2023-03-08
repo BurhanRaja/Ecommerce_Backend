@@ -5,7 +5,7 @@ const Product = require("../model/Product");
 exports.getProducts = async (req, res, next) => {
   let success = false;
   try {
-    const products = Product.find({ seller_id: req.seller.id });
+    const products = await Product.find({ seller_id: req.seller.id });
     success = true;
     return res.status(200).send({
       success,
@@ -26,8 +26,8 @@ exports.createProduct = async (req, res, next) => {
     const {
       name,
       images,
+      thumbnail,
       description,
-      custom_information,
       price,
       colors,
       sizes,
@@ -41,8 +41,8 @@ exports.createProduct = async (req, res, next) => {
     const product = await Product.create({
       name,
       images,
+      thumbnail,
       description,
-      custom_information,
       price,
       colors,
       sizes,
@@ -77,7 +77,7 @@ exports.updateProduct = async (req, res, next) => {
       name,
       images,
       description,
-      custom_information,
+      thumbnail,
       price,
       colors,
       sizes,
@@ -93,7 +93,7 @@ exports.updateProduct = async (req, res, next) => {
     if (name) updProd.name = name;
     if (images) updProd.images = images;
     if (description) updProd.description = description;
-    if (custom_information) updProd.custom_information = custom_information;
+    if (thumbnail) updProd.thumbnail = thumbnail;
     if (price) updProd.price = price;
     if (colors) updProd.colors = colors;
     if (sizes) updProd.sizes = sizes;
@@ -161,7 +161,7 @@ exports.getAllProducts = async (req, res, next) => {
     let price_range = [];
 
     if (filters.seller) {
-      updFilters.seller_id = { $in: filters.seller.split(",") };
+      updFilters.seller_info = { $in: filters.seller.split(",") };
     }
     if (filters.parentcategory) {
       updFilters.parent_category_id = filters.parentcategory;
@@ -183,13 +183,15 @@ exports.getAllProducts = async (req, res, next) => {
       updFilters["review.ratings"] = { $lte: Number(filters.rating) };
     }
 
-    let products = await Product.find(updFilters).populate({
-      path: "dicount",
-      model: "Dicount",
-    }).populate({
-      path: "seller_info",
-      model: "Sellerinfo"
-    });
+    let products = await Product.find(updFilters)
+      .populate({
+        path: "discount",
+        model: "Dicount",
+      })
+      .populate({
+        path: "seller_info",
+        model: "Sellerinfo",
+      });
 
     if (!products) {
       return res.status(404).send({ success, message: "404 Not Found" });
@@ -261,24 +263,24 @@ exports.updateReview = async (req, res, next) => {
 
     let reviews = await Product.findOne({
       id: req.params.id,
-      reviews: { user_id: req.user.id },
     });
 
     if (!reviews) {
       return res.status(404).send({ success, message: "404 Not Found." });
     }
 
-    let updReviews = {};
-    if (content) updReviews.content = content;
-    if (ratings) updReviews.ratings = ratings;
-    updReviews.updated_at = new Date().toISOString();
-
     reviews = await Product.findOneAndUpdate(
       {
         id: req.params.id,
         "reviews.user_id": req.user.id,
       },
-      { $set: { "reviews.$": updReviews } }
+      {
+        $set: {
+          "reviews.content": content,
+          "reviews.ratings": ratings,
+          "reviews.updated_at": new Date().toISOString(),
+        },
+      }
     );
 
     success = true;
@@ -299,7 +301,6 @@ exports.deleteReview = async (req, res, next) => {
   try {
     let reviews = await Product.findOne({
       id: req.params.id,
-      reviews: { user_id: req.user.id },
     });
 
     if (!reviews) {
@@ -310,7 +311,7 @@ exports.deleteReview = async (req, res, next) => {
       {
         id: req.params.id,
       },
-      { $pull: { reviews: { user_id: req.user.id } } }
+      { $pull: { reviews: { _id: req.params.reviewid } } }
     );
 
     success = true;
@@ -341,9 +342,10 @@ exports.singleProduct = async (req, res, next) => {
       .populate({
         path: "discount",
         model: "Discount",
-      }).populate({
+      })
+      .populate({
         path: "seller_info",
-        model: "Sellerinfo"
+        model: "Sellerinfo",
       })
       .exec();
 
