@@ -18,9 +18,9 @@ const ProductSchema = new Schema(
       ],
       required: true,
     },
-    thumbnail: { 
-      type: String, 
-      required: true 
+    thumbnail: {
+      type: String,
+      required: true,
     },
     description: {
       type: String,
@@ -41,7 +41,7 @@ const ProductSchema = new Schema(
     seller_info: {
       type: Schema.Types.ObjectId,
       ref: "Sellerinfo",
-      required: true
+      required: true,
     },
     parent_category_id: {
       type: Schema.Types.ObjectId,

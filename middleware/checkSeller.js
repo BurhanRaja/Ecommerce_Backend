@@ -4,6 +4,13 @@ const Sellerinfo = require("../model/Sellerinfo");
 const checkSeller = async (req, res, next) => {
   let success = false;
 
+  if (!req.headers.authorization) {
+    return res.status(401).send({
+      success,
+      message: "Please authenticate with valid token",
+    });
+  }
+
   const token = req.headers.authorization.split(' ')[1];
 
   if (!token) {

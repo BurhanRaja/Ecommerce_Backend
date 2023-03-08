@@ -27,6 +27,8 @@ app.use("/api/subcategory", require("./routes/subcategory/index")); // Subcatego
 
 app.use("/api/product", require("./routes/product/index")); // Products
 
+app.use("/api/discount", require("./routes/discount/index")); // Discount
+
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
 });

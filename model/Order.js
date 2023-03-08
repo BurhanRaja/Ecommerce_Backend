@@ -15,6 +15,10 @@ const OrderSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Useraddress",
     required: true,
+  },
+  payment_status: {
+    type: Boolean,
+    required: true
   }
 });
 
