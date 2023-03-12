@@ -98,6 +98,6 @@ exports.login = async (req, res, next) => {
   } catch (err) {
     res
       .status(500)
-      .send({ success: false, error: "Internal Server Occurred." });
+      .send({ success: false, error: "Internal Server Error." });
   }
 };

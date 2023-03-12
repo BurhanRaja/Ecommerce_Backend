@@ -78,7 +78,9 @@ router.put("/update/review/:id", checkUser, updateReview);
 // ROUTE-4: Delete Review
 router.delete("/delete/review/:id/:reviewid", checkUser, deleteReview);
 
+
 // For All
+// ROUTE-1: Get Single product
 router.get("/:id", singleProduct);
 
 module.exports = router;

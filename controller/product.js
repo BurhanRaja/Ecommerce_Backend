@@ -182,6 +182,9 @@ exports.getAllProducts = async (req, res, next) => {
     if (filters.rating) {
       updFilters["review.ratings"] = { $lte: Number(filters.rating) };
     }
+    if (filters.discount) {
+      updFilters.discount = {$gte: Number(filters.discount)}
+    }
 
     let products = await Product.find(updFilters)
       .populate({

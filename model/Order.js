@@ -19,6 +19,10 @@ const OrderSchema = new Schema({
   payment_status: {
     type: Boolean,
     required: true
+  },
+  is_delievered: {
+    type: Boolean,
+    required: true
   }
 });
 
