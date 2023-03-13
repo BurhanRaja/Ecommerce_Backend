@@ -8,9 +8,30 @@ const CartSchema = new Schema({
   },
   products: [
     {
-      type: Schema.Types.ObjectId,
-      ref: "Product",
-      required: true,
+      product_id: {
+        type: Schema.Types.ObjectId,
+        ref: "Product",
+        required: true
+      },
+      name: {
+        type: String,
+        required: true
+      },
+      color: {
+        type: String,
+        required: true
+      },
+      info: String,
+      image: {
+        type: String,
+        required: true
+      },
+      quantity: {
+        type: Number,
+        required: true
+      },
+      size: String,
+      price: Number
     },
   ],
   total: {
