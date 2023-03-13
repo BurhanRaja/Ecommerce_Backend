@@ -29,7 +29,8 @@ exports.addToCart = async (req, res, next) => {
     const product = req.body;
     let pDetail = {};
 
-    if (product.proudct_id) pDetail.product_id = product.product_id;
+    if (product.proudctid) pDetail.product_id = product.product_id;
+    if (product.sellerid) pDetail.seller_id = product.seller_id;
     if (product.name) pDetail.name = product.name;
     if (product.color) pDetail.color = product.color;
     if (product.image) pDetail.image = product.image;

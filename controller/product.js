@@ -1,5 +1,6 @@
 const { validateReq } = require("../utils/vaidation");
 const Product = require("../model/Product");
+const Cart = require("../model/Cart");
 
 // Admin Side ----------------------------------------------------------------------------
 exports.getProducts = async (req, res, next) => {

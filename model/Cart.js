@@ -8,6 +8,11 @@ const CartSchema = new Schema({
   },
   products: [
     {
+      seller_id: {
+        type: Schema.Types.ObjectId,
+        ref: "Seller",
+        required: true
+      },
       product_id: {
         type: Schema.Types.ObjectId,
         ref: "Product",
