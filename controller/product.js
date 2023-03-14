@@ -26,7 +26,7 @@ exports.createProduct = async (req, res, next) => {
   try {
     const {
       name,
-      images,
+      images_info,
       thumbnail,
       description,
       price,
@@ -41,7 +41,7 @@ exports.createProduct = async (req, res, next) => {
 
     const product = await Product.create({
       name,
-      images,
+      images_info,
       thumbnail,
       description,
       price,
@@ -76,7 +76,7 @@ exports.updateProduct = async (req, res, next) => {
   try {
     const {
       name,
-      images,
+      images_info,
       description,
       thumbnail,
       price,
@@ -92,7 +92,7 @@ exports.updateProduct = async (req, res, next) => {
     const updProd = {};
 
     if (name) updProd.name = name;
-    if (images) updProd.images = images;
+    if (images_info) updProd.images_info = images_info;
     if (description) updProd.description = description;
     if (thumbnail) updProd.thumbnail = thumbnail;
     if (price) updProd.price = price;
@@ -153,66 +153,6 @@ exports.deleteProduct = async (req, res, next) => {
 };
 
 // Client Side ---------------------------------------------------------------------------
-// Get All Products Based on Filters
-exports.getAllProducts = async (req, res, next) => {
-  let success = false;
-  try {
-    let filters = req.query;
-    let updFilters = {};
-    let price_range = [];
-
-    if (filters.seller) {
-      updFilters.seller_info = { $in: filters.seller.split(",") };
-    }
-    if (filters.parentcategory) {
-      updFilters.parent_category_id = filters.parentcategory;
-    }
-    if (filters.category) {
-      updFilters.category_id = { $in: filters.category.split(",") };
-    }
-    if (filters.subcategory) {
-      updFilters.sub_category_id = { $in: filters.subcategory.split(",") };
-    }
-    if (filters.price) {
-      price_range = filters.price_range.split(",");
-      updFilters.price = {
-        $lte: Number(price_range[0]) || 1000000,
-        $gte: Number(price_range[1]) || 0,
-      };
-    }
-    if (filters.rating) {
-      updFilters["review.ratings"] = { $lte: Number(filters.rating) };
-    }
-    if (filters.discount) {
-      updFilters.discount = {$gte: Number(filters.discount)}
-    }
-
-    let products = await Product.find(updFilters)
-      .populate({
-        path: "discount",
-        model: "Dicount",
-      })
-      .populate({
-        path: "seller_info",
-        model: "Sellerinfo",
-      });
-
-    if (!products) {
-      return res.status(404).send({ success, message: "404 Not Found" });
-    }
-
-    success = true;
-
-    return res.status(200).send({
-      success,
-      products,
-    });
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ success: false, error: "Internal Server Error" });
-  }
-};
 
 // Add Rating Only for authenticated user
 exports.addReview = async (req, res, next) => {
@@ -332,6 +272,71 @@ exports.deleteReview = async (req, res, next) => {
 };
 
 // For All ---------------------------------------------------------------
+// Get All Products Based on Filters
+exports.getAllProducts = async (req, res, next) => {
+  let success = false;
+  try {
+    let filters = req.query;
+    let updFilters = {};
+    let price_range = [];
+
+    if (filters.company) {
+      updFilters.seller_info = { $in: filters.company.split(",") };
+    }
+    if (filters.parentcategory) {
+      updFilters.parent_category_id = filters.parentcategory;
+    }
+    if (filters.category) {
+      updFilters.category_id = { $in: filters.category.split(",") };
+    }
+    if (filters.subcategory) {
+      updFilters.sub_category_id = { $in: filters.subcategory.split(",") };
+    }
+    if (filters.price) {
+      price_range = filters.price.split(",");
+      updFilters.price = {
+        $gte: Number(price_range[0]) || 0,
+        $lte: Number(price_range[1]) || 1000000,
+      };
+    }
+    if (filters.rating) {
+      updFilters["review.ratings"] = { $lte: Number(filters.rating) };
+    }
+
+    let products = await Product.find(updFilters)
+      .populate({
+        path: "discount",
+        model: "Discount",
+      })
+      .populate({
+        path: "seller_info",
+        model: "Sellerinfo",
+      });
+
+    if (filters.discount) {
+      products = products.filter(
+        (el) => el.discount.discount_percentage > Number(filters.discount)
+      );
+    }
+
+    if (!products) {
+      return res.status(404).send({ success, message: "404 Not Found" });
+    }
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      products,
+    });
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ success: false, error: "Internal Server Error" });
+  }
+};
+
 exports.singleProduct = async (req, res, next) => {
   let success = false;
 
@@ -358,6 +363,41 @@ exports.singleProduct = async (req, res, next) => {
     return res.status(200).send({
       success,
       product,
+    });
+  } catch (err) {
+    return res
+      .status(200)
+      .send({ success: false, error: "Internal Server Error" });
+  }
+};
+
+exports.getImageInfo = async (req, res, next) => {
+  let success = false;
+  try {
+    const filters = req.query;
+
+    let product = await Product.findOne({ id: filters.productid });
+
+    if (!product) {
+      return res.status(404).send({ success, message: "404 Not Found" });
+    }
+
+    let updFilter = {};
+
+    if (filters.color) updFilter.color = filters.color;
+
+    let imageInfo = await Product.find(
+      { id: filters.productid, images_info: updFilter },
+      {
+        "images_info.$": 1,
+      }
+    );
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      imageInfo,
     });
   } catch (err) {
     return res

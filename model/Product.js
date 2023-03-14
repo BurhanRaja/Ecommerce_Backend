@@ -9,7 +9,7 @@ const ProductSchema = new Schema(
     images_info: {
       type: [
         {
-          url: String,
+          urls: [String],
           color: String,
           size: String,
           info_type: String,
@@ -27,7 +27,7 @@ const ProductSchema = new Schema(
       required: true,
     },
     price: {
-      type: Schema.Types.Decimal128,
+      type: Number,
       required: true,
     },
     colors: [String],
