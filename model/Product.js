@@ -55,7 +55,7 @@ const ProductSchema = new Schema(
     },
     reviews: [
       {
-        body: String,
+        content: String,
         ratings: Number,
         date: Date,
         user_id: {

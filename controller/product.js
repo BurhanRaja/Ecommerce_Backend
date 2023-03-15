@@ -214,23 +214,48 @@ exports.addRating = async (req, res ,next) => {
   let success = false;
   try {
 
-    let rating = Product.findOne({
+    const {content, ratings} = req.body;
+
+    let reviews = Product.findOne({
       _id: req.params.id,
-      rating: {user_id: req.user.id}
+      reviews: {user_id: req.user.id}
     });
 
-    if (rating) {
+    if (reviews) {
       return res.status(400).send({success, message: "Rating already added."});
     }
 
-    rating = Product.findOne({});
+    reviews = Product.findOne({_id: req.params.id, reviews: {user_id: req.user.i}}, {
+      $push: {
+        rating: {
+          reviews: {
+            content,
+            ratings,
+            date: new Date().toISOString(),
+            user_id: req.user.id
+          }
+        }
+      }
+    });
 
     success = true;
 
     return res.status(200).send({
       success,
-      rating
+      reviews
     });
+
+  } catch (err) {
+    
+  }
+}
+
+// Edit Rating
+exports.editRating = async (req, res, next) => {
+  let success = false;
+  try {
+    
+    let rating = await Product.findOne({id: req.params.id, rating: {user_id: req.user.i}})
 
   } catch (err) {
     
