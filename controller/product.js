@@ -376,7 +376,7 @@ exports.getImageInfo = async (req, res, next) => {
   try {
     const filters = req.query;
 
-    let product = await Product.findOne({ id: filters.productid });
+    let product = await Product.findOne({ id: req.params.id });
 
     if (!product) {
       return res.status(404).send({ success, message: "404 Not Found" });
@@ -384,10 +384,15 @@ exports.getImageInfo = async (req, res, next) => {
 
     let updFilter = {};
 
+    if (filters.size) updFilter.size = filters.size;
     if (filters.color) updFilter.color = filters.color;
+    if (filters.info_type) updFilter.info_type = filters.info_type;
+
+    let newFilter = {};
+    newFilter['$elemMatch'] = updFilter;
 
     let imageInfo = await Product.find(
-      { id: filters.productid, images_info: updFilter },
+      { id: req.params.id, images_info: newFilter },
       {
         "images_info.$": 1,
       }
@@ -400,8 +405,9 @@ exports.getImageInfo = async (req, res, next) => {
       imageInfo,
     });
   } catch (err) {
+    console.log(err);
     return res
-      .status(200)
+      .status(500)
       .send({ success: false, error: "Internal Server Error" });
   }
 };

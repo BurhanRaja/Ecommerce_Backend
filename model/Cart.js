@@ -11,32 +11,29 @@ const CartSchema = new Schema({
       seller_id: {
         type: Schema.Types.ObjectId,
         ref: "Seller",
-        required: true
+        required: true,
       },
       product_id: {
         type: Schema.Types.ObjectId,
         ref: "Product",
-        required: true
+        required: true,
       },
       name: {
         type: String,
-        required: true
+        required: true,
       },
-      color: {
-        type: String,
-        required: true
-      },
-      info: String,
-      image: {
-        type: String,
-        required: true
+      product_info: {
+          color: String,
+          size: String,
+          info: String,
+          total_quantity: Number,
+          urls: [String]
       },
       quantity: {
         type: Number,
-        required: true
+        required: true,
       },
-      size: String,
-      price: Number
+      price: Number,
     },
   ],
   total: {

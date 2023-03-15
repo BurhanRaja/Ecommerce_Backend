@@ -38,22 +38,9 @@ app.listen(port, () => {
 
 // TODO:
 
-// ? Cart ---------------------
-// Add to Cart - 
-// If is_active is false or null with the user_id 
-// then Create Cart
-// else Add to Cart
-
-// RUD of Cart
-
-// Update the product using product id in cart itself
-
-// ? Cart --------------------
-
-// ? Order ------------------
-// Order Schema
-// Create Order when checkout
-// RUD of Order
+// Subtract Quantity from Product info
+// Add Orders to SellerOrders
+// 
 
 
 // ! Completed

@@ -58,10 +58,6 @@ const ProductSchema = new Schema(
       ref: "Sub_Category",
       required: true,
     },
-    quantity: {
-      type: Number,
-      required: true,
-    },
     reviews: [
       {
         content: String,

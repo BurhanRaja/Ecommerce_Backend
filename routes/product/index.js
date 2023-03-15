@@ -9,6 +9,7 @@ const {
   updateReview,
   deleteReview,
   singleProduct,
+  getImageInfo,
 } = require("../../controller/product");
 const { body } = require("express-validator");
 const checkSeller = require("../../middleware/checkSeller");
@@ -66,21 +67,24 @@ router.put(
 router.delete("/delete/:id", checkSeller, deleteProduct);
 
 // Client
-// ROUTE-1: Get All Products
-router.get("/all/products", getAllProducts);
-
-// ROUTE-2: Write a Review
+// ROUTE-1: Write a Review
 router.post("/add/review", checkUser, addReview);
 
-// ROUTE-3: Update Review
+// ROUTE-2: Update Review
 router.put("/update/review/:id", checkUser, updateReview);
 
-// ROUTE-4: Delete Review
+// ROUTE-3: Delete Review
 router.delete("/delete/review/:id/:reviewid", checkUser, deleteReview);
 
 
 // For All
-// ROUTE-1: Get Single product
+// ROUTE-1: Get All Products
+router.get("/all/products", getAllProducts);
+
+// ROUTE-2: Get Single product
 router.get("/:id", singleProduct);
+
+// ROUTE-3: Image Info
+router.get("/filter/images/:id", getImageInfo);
 
 module.exports = router;
