@@ -1,7 +1,15 @@
 const jwt = require("jsonwebtoken");
+const Sellerinfo = require("../model/Sellerinfo");
 
-const checkSeller = (req, res, next) => {
+const checkSeller = async (req, res, next) => {
   let success = false;
+
+  if (!req.headers.authorization) {
+    return res.status(401).send({
+      success,
+      message: "Please authenticate with valid token",
+    });
+  }
 
   const token = req.headers.authorization.split(' ')[1];
 
@@ -15,7 +23,15 @@ const checkSeller = (req, res, next) => {
   let privateKey = process.env.SECRET_KEY;
 
   const data = jwt.verify(token, privateKey);
-  req.seller = data.seller;
+
+  let sellerinfo = await Sellerinfo.findOne({seller_id: data.seller.id});
+
+  let seller = {
+    id: data.seller.id,
+    sellerinfo
+  }
+
+  req.seller = seller;
 
   next();
 };

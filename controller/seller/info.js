@@ -42,7 +42,7 @@ exports.createInfo = async (req, res, next) => {
       tax_info,
     } = req.body;
 
-    let info = await Sellerinfo.find({ company_name: company_name });
+    let info = await Sellerinfo.findOne({ company_name: company_name });
 
     if (info) {
       return res

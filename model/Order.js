@@ -1,20 +1,31 @@
 const { Schema, default: mongoose } = require("mongoose");
 
 const OrderSchema = new Schema({
-  user_id: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  cart_id: {
+  cart: {
     type: Schema.Types.ObjectId,
     ref: "Cart",
     required: true,
   },
-  address_id: {
+  address: {
     type: Schema.Types.ObjectId,
     ref: "Useraddress",
     required: true,
+  },
+  payment_status: {
+    type: Boolean,
+    required: true
+  },
+  payment_type: {
+    type: String
+  },
+  is_delievered: {
+    type: Boolean,
+    required: true
   }
 });
 

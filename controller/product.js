@@ -1,11 +1,12 @@
 const { validateReq } = require("../utils/vaidation");
 const Product = require("../model/Product");
+const Cart = require("../model/Cart");
 
-// Admin Side
-exports.getProduct = async (req, res, next) => {
+// Admin Side ----------------------------------------------------------------------------
+exports.getProducts = async (req, res, next) => {
   let success = false;
   try {
-    const products = Product.find({ seller_id: req.seller.id });
+    const products = await Product.find({ seller_id: req.seller.id });
     success = true;
     return res.status(200).send({
       success,
@@ -25,9 +26,9 @@ exports.createProduct = async (req, res, next) => {
   try {
     const {
       name,
-      images,
+      images_info,
+      thumbnail,
       description,
-      custom_information,
       price,
       colors,
       sizes,
@@ -40,15 +41,16 @@ exports.createProduct = async (req, res, next) => {
 
     const product = await Product.create({
       name,
-      images,
+      images_info,
+      thumbnail,
       description,
-      custom_information,
       price,
       colors,
       sizes,
       info_type,
       quantity,
       seller_id: req.seller.id,
+      seller_info: req.seller.sellerinfo._id,
       category_id,
       sub_category_id,
       parent_category_id,
@@ -74,9 +76,9 @@ exports.updateProduct = async (req, res, next) => {
   try {
     const {
       name,
-      images,
+      images_info,
       description,
-      custom_information,
+      thumbnail,
       price,
       colors,
       sizes,
@@ -90,9 +92,9 @@ exports.updateProduct = async (req, res, next) => {
     const updProd = {};
 
     if (name) updProd.name = name;
-    if (images) updProd.images = images;
+    if (images_info) updProd.images_info = images_info;
     if (description) updProd.description = description;
-    if (custom_information) updProd.custom_information = custom_information;
+    if (thumbnail) updProd.thumbnail = thumbnail;
     if (price) updProd.price = price;
     if (colors) updProd.colors = colors;
     if (sizes) updProd.sizes = sizes;
@@ -111,11 +113,7 @@ exports.updateProduct = async (req, res, next) => {
       return res.status(401).send("Unauthorized Access!");
     }
 
-    product = await Product.findByIdAndUpdate(
-      req.params.id,
-      { $set: updProd },
-      { new: true }
-    );
+    product = await Product.findByIdAndUpdate(req.params.id, { $set: updProd });
     success = true;
 
     return res.status(200).send({
@@ -154,8 +152,126 @@ exports.deleteProduct = async (req, res, next) => {
   }
 };
 
-// Client Side
+// Client Side ---------------------------------------------------------------------------
 
+// Add Rating Only for authenticated user
+exports.addReview = async (req, res, next) => {
+  let success = false;
+  try {
+    const { content, ratings } = req.body;
+
+    let reviews = await Product.findOne({
+      id: req.params.id,
+      reviews: { user_id: req.user.id },
+    });
+
+    if (reviews) {
+      return res
+        .status(400)
+        .send({ success, message: "Rating already added." });
+    }
+
+    reviews = await Product.findOneAndUpdate(
+      { id: req.params.id },
+      {
+        $push: {
+          reviews: {
+            content,
+            ratings,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            user_id: req.user.id,
+          },
+        },
+      }
+    );
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      reviews,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, error: "Internal Server Error." });
+  }
+};
+
+// Update Review
+exports.updateReview = async (req, res, next) => {
+  let success = false;
+  try {
+    const { content, ratings } = req.body;
+
+    let reviews = await Product.findOne({
+      id: req.params.id,
+    });
+
+    if (!reviews) {
+      return res.status(404).send({ success, message: "404 Not Found." });
+    }
+
+    reviews = await Product.findOneAndUpdate(
+      {
+        id: req.params.id,
+        "reviews.user_id": req.user.id,
+      },
+      {
+        $set: {
+          "reviews.content": content,
+          "reviews.ratings": ratings,
+          "reviews.updated_at": new Date().toISOString(),
+        },
+      }
+    );
+
+    success = true;
+    return res.status(200).send({
+      success,
+      reviews,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, error: "Internal Server Error." });
+  }
+};
+
+// Delete Review
+exports.deleteReview = async (req, res, next) => {
+  let success = false;
+  try {
+    let reviews = await Product.findOne({
+      id: req.params.id,
+    });
+
+    if (!reviews) {
+      return res.status(404).send({ success, message: "404 Not Found." });
+    }
+
+    reviews = await Product.findOneAndUpdate(
+      {
+        id: req.params.id,
+      },
+      { $pull: { reviews: { _id: req.params.reviewid } } }
+    );
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      reviews,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, error: "Internal Server Error." });
+  }
+};
+
+// For All ---------------------------------------------------------------
 // Get All Products Based on Filters
 exports.getAllProducts = async (req, res, next) => {
   let success = false;
@@ -164,8 +280,8 @@ exports.getAllProducts = async (req, res, next) => {
     let updFilters = {};
     let price_range = [];
 
-    if (filters.seller) {
-      updFilters.seller_id = { $in: filters.seller.split(",") };
+    if (filters.company) {
+      updFilters.seller_info = { $in: filters.company.split(",") };
     }
     if (filters.parentcategory) {
       updFilters.parent_category_id = filters.parentcategory;
@@ -177,20 +293,31 @@ exports.getAllProducts = async (req, res, next) => {
       updFilters.sub_category_id = { $in: filters.subcategory.split(",") };
     }
     if (filters.price) {
-      price_range = filters.price_range.split(",");
+      price_range = filters.price.split(",");
       updFilters.price = {
-        $lte: Number(price_range[0]) || 1000000,
-        $gte: Number(price_range[1]) || 0,
+        $gte: Number(price_range[0]) || 0,
+        $lte: Number(price_range[1]) || 1000000,
       };
     }
     if (filters.rating) {
       updFilters["review.ratings"] = { $lte: Number(filters.rating) };
     }
 
-    let products = await Product.find(updFilters).populate({
-      path: "dicount",
-      model: "Dicount",
-    });
+    let products = await Product.find(updFilters)
+      .populate({
+        path: "discount",
+        model: "Discount",
+      })
+      .populate({
+        path: "seller_info",
+        model: "Sellerinfo",
+      });
+
+    if (filters.discount) {
+      products = products.filter(
+        (el) => el.discount.discount_percentage > Number(filters.discount)
+      );
+    }
 
     if (!products) {
       return res.status(404).send({ success, message: "404 Not Found" });
@@ -203,67 +330,13 @@ exports.getAllProducts = async (req, res, next) => {
       products,
     });
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ success: false, error: "Internal Server Error" });
   }
 };
 
-// Add Rating Only for authenticated user
-exports.addRating = async (req, res ,next) => {
-  let success = false;
-  try {
-
-    const {content, ratings} = req.body;
-
-    let reviews = Product.findOne({
-      _id: req.params.id,
-      reviews: {user_id: req.user.id}
-    });
-
-    if (reviews) {
-      return res.status(400).send({success, message: "Rating already added."});
-    }
-
-    reviews = Product.findOne({_id: req.params.id, reviews: {user_id: req.user.i}}, {
-      $push: {
-        rating: {
-          reviews: {
-            content,
-            ratings,
-            date: new Date().toISOString(),
-            user_id: req.user.id
-          }
-        }
-      }
-    });
-
-    success = true;
-
-    return res.status(200).send({
-      success,
-      reviews
-    });
-
-  } catch (err) {
-    
-  }
-}
-
-// Edit Rating
-exports.editRating = async (req, res, next) => {
-  let success = false;
-  try {
-    
-    let rating = await Product.findOne({id: req.params.id, rating: {user_id: req.user.i}})
-
-  } catch (err) {
-    
-  }
-}
-
-
-// For All
 exports.singleProduct = async (req, res, next) => {
   let success = false;
 
@@ -280,8 +353,8 @@ exports.singleProduct = async (req, res, next) => {
         model: "Discount",
       })
       .populate({
-        path: "seller_id",
-        model: "Seller",
+        path: "seller_info",
+        model: "Sellerinfo",
       })
       .exec();
 
@@ -294,6 +367,47 @@ exports.singleProduct = async (req, res, next) => {
   } catch (err) {
     return res
       .status(200)
+      .send({ success: false, error: "Internal Server Error" });
+  }
+};
+
+exports.getImageInfo = async (req, res, next) => {
+  let success = false;
+  try {
+    const filters = req.query;
+
+    let product = await Product.findOne({ id: req.params.id });
+
+    if (!product) {
+      return res.status(404).send({ success, message: "404 Not Found" });
+    }
+
+    let updFilter = {};
+
+    if (filters.size) updFilter.size = filters.size;
+    if (filters.color) updFilter.color = filters.color;
+    if (filters.info_type) updFilter.info_type = filters.info_type;
+
+    let newFilter = {};
+    newFilter['$elemMatch'] = updFilter;
+
+    let imageInfo = await Product.find(
+      { id: req.params.id, images_info: newFilter },
+      {
+        "images_info.$": 1,
+      }
+    );
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      imageInfo,
+    });
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
       .send({ success: false, error: "Internal Server Error" });
   }
 };

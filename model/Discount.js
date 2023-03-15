@@ -2,11 +2,18 @@ const { Schema, default: mongoose } = require("mongoose");
 
 const DiscountSchemas = new Schema(
   {
-    description: String,
-    discount_percentage: Number,
-    is_active: Boolean,
-    starts_on: Date,
-    expires_on: Date,
+    description: {
+      type: String,
+      required: true,
+    },
+    discount_percentage: {
+      type: Number,
+      required: true,
+    },
+    is_active: {
+      type: Boolean,
+      required: true,
+    },
     seller_id: {
       type: Schema.Types.ObjectId,
       ref: "Seller",
@@ -14,9 +21,10 @@ const DiscountSchemas = new Schema(
     },
     products: [
       {
-        
-      }
-    ]
+        type: Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
   },
   {
     timestamps: true,

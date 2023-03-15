@@ -1,24 +1,36 @@
 const express = require("express");
-const product = require("../../controller/product");
+const {
+  getProducts,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getAllProducts,
+  addReview,
+  updateReview,
+  deleteReview,
+  singleProduct,
+  getImageInfo,
+} = require("../../controller/product");
 const { body } = require("express-validator");
 const checkSeller = require("../../middleware/checkSeller");
+const checkUser = require("../../middleware/checkUser");
 
 const router = express.Router();
 
-// Admin
+// Seller
 // ROUTE-1: Get Product
-router.get("/", checkSeller, product.getProduct);
+router.get("/", checkSeller, getProducts);
 
 // ROUTE-2: Create Product
 router.post(
   "/create",
   [
     body("name", "Please enter at least 2 characters").isLength({ min: 2 }),
-    body("images", "Please add images").isArray(),
+    body("images_info", "Please add images").isArray(),
     body("description", "Please enter at least 10 characters").isLength({
       min: 10,
     }),
-    body("custom_information", "Please enter at least 10 characters").isLength({
+    body("thumbnail", "Please enter at least 10 characters").isLength({
       min: 10,
     }),
     body("price", "Please add Price").isNumeric(),
@@ -27,7 +39,7 @@ router.post(
     body("quantity", "Please a available quantity.").isNumeric(),
   ],
   checkSeller,
-  product.createProduct
+  createProduct
 );
 
 // ROUTE-3: Update Product
@@ -35,11 +47,11 @@ router.put(
   "/update/:id",
   [
     body("name", "Please enter at least 2 characters").isLength({ min: 2 }),
-    body("images", "Please add images").isArray(),
+    body("images_info", "Please add images").isArray(),
     body("description", "Please enter at least 10 characters").isLength({
       min: 10,
     }),
-    body("custom_information", "Please enter at least 10 characters").isLength({
+    body("thumbnail", "Please enter at least 10 characters").isLength({
       min: 10,
     }),
     body("price", "Please add Price").isNumeric(),
@@ -48,15 +60,31 @@ router.put(
     body("quantity", "Please a available quantity.").isNumeric(),
   ],
   checkSeller,
-  product.updateProduct
+  updateProduct
 );
 
 // ROUTE-4: Delete Product
-router.delete("/delete/:id", checkSeller, product.deleteProduct);
-
+router.delete("/delete/:id", checkSeller, deleteProduct);
 
 // Client
+// ROUTE-1: Write a Review
+router.post("/add/review", checkUser, addReview);
+
+// ROUTE-2: Update Review
+router.put("/update/review/:id", checkUser, updateReview);
+
+// ROUTE-3: Delete Review
+router.delete("/delete/review/:id/:reviewid", checkUser, deleteReview);
+
+
+// For All
 // ROUTE-1: Get All Products
-router.get("/all/products", product.getAllProducts);
+router.get("/all/products", getAllProducts);
+
+// ROUTE-2: Get Single product
+router.get("/:id", singleProduct);
+
+// ROUTE-3: Image Info
+router.get("/filter/images/:id", getImageInfo);
 
 module.exports = router;
