@@ -8,26 +8,21 @@ const CartSchema = new Schema({
   },
   products: [
     {
-      seller_id: {
+      seller: {
         type: Schema.Types.ObjectId,
         ref: "Seller",
         required: true,
       },
-      product_id: {
+      product: {
         type: Schema.Types.ObjectId,
         ref: "Product",
         required: true,
       },
-      name: {
-        type: String,
-        required: true,
-      },
       product_info: {
-          color: String,
-          size: String,
-          info: String,
-          total_quantity: Number,
-          urls: [String]
+        color: String,
+        size: String,
+        info_type: String,
+        thumbnail: String,
       },
       quantity: {
         type: Number,
@@ -37,8 +32,7 @@ const CartSchema = new Schema({
     },
   ],
   total: {
-    type: Schema.Types.Decimal128,
-    required: true,
+    type: Number,
   },
   is_active: {
     type: Schema.Types.Boolean,

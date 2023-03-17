@@ -29,6 +29,8 @@ app.use("/api/product", require("./routes/product/index")); // Products
 
 app.use("/api/discount", require("./routes/discount/index")); // Discount
 
+app.use("/api/cart", require("./routes/cart/index")); // Cart
+
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
 });
@@ -40,7 +42,7 @@ app.listen(port, () => {
 
 // Subtract Quantity from Product info
 // Add Orders to SellerOrders
-// 
+// Cancel Order
 
 
 // ! Completed

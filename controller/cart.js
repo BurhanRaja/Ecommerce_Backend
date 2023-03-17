@@ -28,16 +28,21 @@ exports.addToCart = async (req, res, next) => {
   try {
     const product = req.body;
     let pDetail = {};
+    
+    if (product.price) pDetail.price = product.price;    
+    if (product.sellerid) pDetail.seller = product.sellerid;
+    if (product.productid) pDetail.product = product.productid;
 
-    if (product.proudctid) pDetail.product_id = product.product_id;
-    if (product.sellerid) pDetail.seller_id = product.seller_id;
-    if (product.name) pDetail.name = product.name;
-    if (product.color) pDetail.color = product.color;
-    if (product.image) pDetail.image = product.image;
-    if (product.info) pDetail.info = product.info;
-    if (product.size) pDetail.size = product.size;
+    pDetail.product_info = {};
+    
+    if (product.size) pDetail.product_info.size = product.size;
+
+    if (product.color) pDetail.product_info.color = product.color;
+    if (product.info_type) pDetail.product_info.info_type = product.info_type;
+    if (product.thumbnail) pDetail.product_info.thumbnail = product.thumbnail;
+    
     if (product.quantity) pDetail.quantity = product.quantity;
-    if (product.price) pDetail.price = product.price;
+    
 
     let cart = await Cart.findOne({ user_id: req.user.id, is_active: true });
 
@@ -48,14 +53,12 @@ exports.addToCart = async (req, res, next) => {
           $push: {
             products: pDetail,
           },
-          $set: { total: cart.total + pDetail.price },
         }
       );
     } else {
       cart = await Cart.create({
         user_id: req.user.id,
         products: [pDetail],
-        total: pDetail.price,
         is_active: true,
       });
     }
@@ -67,6 +70,7 @@ exports.addToCart = async (req, res, next) => {
       cart,
     });
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ success: false, error: "Internal Server Error." });
@@ -84,10 +88,44 @@ exports.removeFromCart = async (req, res, next) => {
     }
 
     cart = await Cart.findOneAndUpdate(
-      { id: req.params.id, user_id: req.params.id },
+      {
+        id: req.params.id,
+        user_id: req.user.id,
+      },
       {
         $pull: { products: { _id: req.params.productid } },
       }
+    );
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      cart,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, error: "Internal Server Error." });
+  }
+};
+
+// add Total
+exports.addTotal = async (req, res, next) => {
+  let success = true;
+
+  try {
+    let { total_price } = req.body;
+
+    let cart = await Cart.findOne({ id: req.params.id });
+
+    if (!cart) {
+      return res.status(404).send({ success, message: "404 Not Found" });
+    }
+
+    cart = await Cart.findOneAndUpdate(
+      { id: req.params.id },
+      { $set: { total: total_price } }
     );
 
     success = true;
