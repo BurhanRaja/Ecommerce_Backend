@@ -23,7 +23,7 @@ const OrderSchema = new Schema({
   payment_type: {
     type: String
   },
-  is_delievered: {
+  is_delivered: {
     type: Boolean,
     required: true
   }

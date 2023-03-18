@@ -14,6 +14,10 @@ const ProductSchema = new Schema(
           size: String,
           info_type: String,
           quantity: Number,
+          price: {
+            type: Number,
+            required: true,
+          },
         },
       ],
       required: true,
@@ -24,10 +28,6 @@ const ProductSchema = new Schema(
     },
     description: {
       type: String,
-      required: true,
-    },
-    price: {
-      type: Number,
       required: true,
     },
     colors: [String],

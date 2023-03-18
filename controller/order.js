@@ -1,5 +1,9 @@
 const Cart = require("../model/Cart");
 const Order = require("../model/Order");
+const Useraddress = require("../model/Useraddress");
+
+// Filter all the products based on seller_id
+// To send the filtered order for seller
 
 exports.getSingleOrder = async (req, res, next) => {
   let success = false;
@@ -54,14 +58,18 @@ exports.createOrder = async (req, res, next) => {
   let success = false;
 
   try {
-    const { user, cart, address, payment_status, is_delievered } = req.body;
+    const { cart, payment_type, payment_status, is_delivered } = req.body;
+
+    let address = await Useraddress.findOne({ user_id: req.user.id });
+    // console.log(address);
 
     let order = await Order.create({
-      user,
+      user: req.user.id,
       cart,
-      address,
+      address: address.id,
+      payment_type,
       payment_status,
-      is_delievered,
+      is_delivered,
     });
 
     let cartActive = await Cart.findOneAndUpdate(
@@ -76,57 +84,82 @@ exports.createOrder = async (req, res, next) => {
       order,
     });
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ success: false, error: "Internal Server Error." });
   }
 };
 
-exports.updateOrder = async (req, res, next) => {
-  let success = false;
+// exports.updateOrder = async (req, res, next) => {
+//   let success = false;
 
+//   try {
+//     let order = await Order.findOne({ id: req.params.id });
+
+//     if (!order) {
+//       return res.status(404).send({ success, message: "404 Not Found" });
+//     }
+
+//     let body = req.body;
+
+//     let updOrder = {};
+
+//     if (body.is_delievered) {
+//       updOrder.is_delievered = is_delievered;
+//     }
+//     if (body.payment_status) {
+//       updOrder.payment_status = payment_status;
+//     }
+//     if (body.payment_type) {
+//       updOrder.payment_type = payment_type;
+//     }
+
+//     order = await Order.findOneAndUpdate(
+//       { id: req.params.id },
+//       {
+//         $set: updOrder,
+//       }
+//     );
+
+//     success = true;
+
+//     return res.status(200).send({
+//       success,
+//       order,
+//     });
+//   } catch (err) {
+//     return res
+//       .status(500)
+//       .send({ success: false, error: "Internal Server Error." });
+//   }
+// };
+
+exports.getSellerOrders = async (req, res, next) => {
+  let success = true;
   try {
-    let order = await Order.findOne({ id: req.params.id });
+    let allCartOrder = await Cart.find({
+      products: { seller: req.seller.id },
+    });
 
-    if (!order) {
-      return res.status(404).send({ success, message: "404 Not Found" });
-    }
+    // let orders = await Order.find().populate("cart");
 
-    let body = req.body;
+    // let allCartOrder = await Order.find().populate("cart");
 
-    let updOrder = {};
-
-    if (body.is_delievered) {
-      updOrder.is_delievered = is_delievered;
-    }
-    if (body.payment_status) {
-      updOrder.payment_status = payment_status;
-    }
-    if (body.payment_type) {
-      updOrder.payment_type = payment_type;
-    }
-
-    order = await Order.findOneAndUpdate(
-      { id: req.params.id },
-      {
-        $set: updOrder,
-      }
-    );
+    console.log(req.seller.id);
 
     success = true;
 
     return res.status(200).send({
       success,
-      order,
+      order: allCartOrder,
     });
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ success: false, error: "Internal Server Error." });
   }
 };
 
-
-exports.removeOrder = async (req, res, next) => {
-    
-}
+exports.removeOrder = async (req, res, next) => {};

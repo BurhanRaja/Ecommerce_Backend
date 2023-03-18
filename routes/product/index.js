@@ -54,7 +54,6 @@ router.put(
     body("thumbnail", "Please enter at least 10 characters").isLength({
       min: 10,
     }),
-    body("price", "Please add Price").isNumeric(),
     body("colors", "Please add a colors.").isArray(),
     body("sizes", "Please add a sizes.").isArray(),
     body("quantity", "Please a available quantity.").isNumeric(),
@@ -75,7 +74,6 @@ router.put("/update/review/:id", checkUser, updateReview);
 
 // ROUTE-3: Delete Review
 router.delete("/delete/review/:id/:reviewid", checkUser, deleteReview);
-
 
 // For All
 // ROUTE-1: Get All Products

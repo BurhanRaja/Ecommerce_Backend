@@ -11,7 +11,7 @@ const checkSeller = async (req, res, next) => {
     });
   }
 
-  const token = req.headers.authorization.split(' ')[1];
+  const token = req.headers.authorization.split(" ")[1];
 
   if (!token) {
     return res.status(401).send({
@@ -24,12 +24,12 @@ const checkSeller = async (req, res, next) => {
 
   const data = jwt.verify(token, privateKey);
 
-  let sellerinfo = await Sellerinfo.findOne({seller_id: data.seller.id});
+  let sellerinfo = await Sellerinfo.findOne({ seller_id: data.seller.id });
 
   let seller = {
     id: data.seller.id,
-    sellerinfo
-  }
+    sellerinfo,
+  };
 
   req.seller = seller;
 

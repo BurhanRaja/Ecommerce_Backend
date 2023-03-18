@@ -50,7 +50,7 @@ exports.createProduct = async (req, res, next) => {
       info_type,
       quantity,
       seller_id: req.seller.id,
-      seller_info: req.seller.sellerinfo._id,
+      seller_info: req.seller.sellerinfo.id,
       category_id,
       sub_category_id,
       parent_category_id,
@@ -63,6 +63,7 @@ exports.createProduct = async (req, res, next) => {
       product,
     });
   } catch (err) {
+    console.log(err);
     res.status(500).send({ success: false, error: "Internal Server Error." });
   }
 };
@@ -107,10 +108,6 @@ exports.updateProduct = async (req, res, next) => {
     let product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(404).send("404 Not Found");
-    }
-
-    if (product.seller_id.toString() !== req.seller.id) {
-      return res.status(401).send("Unauthorized Access!");
     }
 
     product = await Product.findByIdAndUpdate(req.params.id, { $set: updProd });
@@ -389,7 +386,7 @@ exports.getImageInfo = async (req, res, next) => {
     if (filters.info_type) updFilter.info_type = filters.info_type;
 
     let newFilter = {};
-    newFilter['$elemMatch'] = updFilter;
+    newFilter["$elemMatch"] = updFilter;
 
     let imageInfo = await Product.find(
       { id: req.params.id, images_info: newFilter },
