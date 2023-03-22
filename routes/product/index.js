@@ -1,4 +1,6 @@
 const express = require("express");
+const multer = require("multer");
+
 const {
   getProducts,
   createProduct,
@@ -22,6 +24,9 @@ const router = express.Router();
 router.get("/", checkSeller, getProducts);
 
 // ROUTE-2: Create Product
+
+
+
 router.post(
   "/create",
   [
@@ -32,11 +37,7 @@ router.post(
     }),
     body("thumbnail", "Please enter at least 10 characters").isLength({
       min: 10,
-    }),
-    body("price", "Please add Price").isNumeric(),
-    body("colors", "Please add a colors.").isArray(),
-    body("sizes", "Please add a sizes.").isArray(),
-    body("quantity", "Please a available quantity.").isNumeric(),
+    })
   ],
   checkSeller,
   createProduct
@@ -54,9 +55,6 @@ router.put(
     body("thumbnail", "Please enter at least 10 characters").isLength({
       min: 10,
     }),
-    body("colors", "Please add a colors.").isArray(),
-    body("sizes", "Please add a sizes.").isArray(),
-    body("quantity", "Please a available quantity.").isNumeric(),
   ],
   checkSeller,
   updateProduct

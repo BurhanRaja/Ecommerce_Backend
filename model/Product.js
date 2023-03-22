@@ -9,10 +9,10 @@ const ProductSchema = new Schema(
     images_info: {
       type: [
         {
-          urls: [String],
+          images: [String],
           color: String,
-          size: String,
-          info_type: String,
+          size: [String],
+          info_type: [String],
           quantity: Number,
           price: {
             type: Number,
@@ -30,9 +30,6 @@ const ProductSchema = new Schema(
       type: String,
       required: true,
     },
-    colors: [String],
-    sizes: [String],
-    info_type: [String],
     seller_id: {
       type: Schema.Types.ObjectId,
       ref: "sellers",

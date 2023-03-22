@@ -1,34 +1,33 @@
 const { Schema, default: mongoose } = require("mongoose");
 
-const SellerOrderSchema = new Schema({
-  seller: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: "Seller",
-  },
-  user_order: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: "Order"
-  },
-  products: [
-    {
-      productid: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: "Product",
-      },
-      product_info: {
-        color: String,
-        size: String,
-        info_type: String,
-        quantity: Number,
-        thumbnail: String,
-      },
+const SellerOrderSchema = new Schema(
+  {
+    seller: {
+      type: Schema.Types.ObjectId,
+      ref: "Seller",
+      required: true,
     },
-  ],
-  price: {
-    type: Number,
-    required: true,
+    products: [
+      {
+        item: {
+          type: Schema.Types.ObjectId,
+          ref: "Cartitem",
+          required: true,
+        },
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+        address: {
+          type: Schema.Types.ObjectId,
+          ref: "Useraddress",
+        },
+      }
+    ],
   },
-});
+  {
+    timestamps: true,
+  }
+);
+
+module.exports = mongoose.model("sellerorder", SellerOrderSchema);

@@ -16,7 +16,7 @@ router.get("/", checkUser, getCart);
 router.post("/addtocart", checkUser, addToCart);
 
 // ROUTE-3: Remove from Cart
-router.delete("/remove/:id/:productid", checkUser, removeFromCart);
+router.delete("/remove/:id/:itemid", checkUser, removeFromCart);
 
 // ROUTE-4: Add total
 router.put("/add/total", addTotal);
