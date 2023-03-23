@@ -29,7 +29,6 @@ exports.createProduct = async (req, res, next) => {
       images_info,
       thumbnail,
       description,
-      quantity,
       category_id,
       sub_category_id,
       parent_category_id,
@@ -40,11 +39,6 @@ exports.createProduct = async (req, res, next) => {
       images_info,
       thumbnail,
       description,
-      price,
-      colors,
-      sizes,
-      info_type,
-      quantity,
       seller_id: req.seller.id,
       seller_info: req.seller.sellerinfo.id,
       category_id,
@@ -87,11 +81,6 @@ exports.updateProduct = async (req, res, next) => {
     if (images_info) updProd.images_info = images_info;
     if (description) updProd.description = description;
     if (thumbnail) updProd.thumbnail = thumbnail;
-    if (price) updProd.price = price;
-    if (colors) updProd.colors = colors;
-    if (sizes) updProd.sizes = sizes;
-    if (info_type) updProd.info_type = info_type;
-    if (quantity) updProd.quantity = quantity;
     if (category_id) updProd.category_id = category_id;
     if (sub_category_id) updProd.sub_category_id = sub_category_id;
     if (parent_category_id) updProd.parent_category_id = parent_category_id;

@@ -32,13 +32,13 @@ exports.addToCart = async (req, res, next) => {
 
     if (product.price) pDetail.price = product.price;
     if (product.sellerid) pDetail.seller = product.sellerid;
+    if (product.seller_info_id) pDetail.seller_info_id = product.seller_info_id;
     if (product.productid) pDetail.product = product.productid;
     if (product.quantity) pDetail.quantity = product.quantity;
 
     pDetail.product_info = {};
 
     if (product.size) pDetail.product_info.size = product.size;
-
     if (product.color) pDetail.product_info.color = product.color;
     if (product.info_type) pDetail.product_info.info_type = product.info_type;
     if (product.thumbnail) pDetail.product_info.thumbnail = product.thumbnail;

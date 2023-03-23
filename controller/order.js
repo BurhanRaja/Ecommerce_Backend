@@ -1,4 +1,5 @@
 const Cart = require("../model/Cart");
+const Cartitem = require("../model/Cartitem");
 const Order = require("../model/Order");
 const Sellerorder = require("../model/Sellerorder");
 const Useraddress = require("../model/Useraddress");
@@ -62,18 +63,10 @@ exports.createOrder = async (req, res, next) => {
     const { cart_id, address_id, payment_type, payment_status, is_delivered } =
       req.body;
 
-    let address = await Useraddress.findOne(
-      { user_id: req.user.id, addresses: { $elemMatch: { id: address_id } } },
-      { addresses: { $elemMatch: { id: address_id } } }
-    );
-
-    console.log(address);
-    return;
-
     let order = await Order.create({
       user: req.user.id,
       cart: cart_id,
-      address: address.addresses.id,
+      address: address_id,
       payment_type,
       payment_status,
       is_delivered,
@@ -86,8 +79,23 @@ exports.createOrder = async (req, res, next) => {
       path: "cartItems",
     });
 
-    console.log(cart);
-    return;
+    let cartItems = await Cartitem.find({ id: { $in: cart.cartItems } });
+
+    for (let i = 0; i < cartItems.length; i++) {
+      await addSeller(
+        cartItems[i].seller,
+        cartItems[i].id,
+        address_id,
+        req.user.id
+      );
+    }
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      order,
+    });
   } catch (err) {
     console.log(err);
     return res
@@ -96,17 +104,54 @@ exports.createOrder = async (req, res, next) => {
   }
 };
 
+const addSeller = async (sellerid, cartItem, addressid, userid) => {
+  let sellerOrder = await Sellerorder.findOne({ seller: sellerid.toString() });
+
+  if (!sellerOrder) {
+    sellerOrder = await Sellerorder.create({
+      seller: sellerid.toString(),
+      products: [
+        {
+          item: cartItem,
+          user: userid,
+          address: addressid,
+        },
+      ],
+    });
+  } else {
+    sellerOrder = await Sellerorder.findOneAndUpdate(
+      { seller: sellerid.toString() },
+      {
+        $push: {
+          products: {
+            item: cartItem,
+            user: userid,
+            address: addressid,
+          },
+        },
+      }
+    );
+  }
+
+  return sellerOrder;
+};
+
 // Get All order based on sellerid
 exports.getSellerOrders = async (req, res, next) => {
-  let success = true;
+  let success = false;
   try {
-    let order = Order.aggregate([
-      { $unwind: "$cart" },
-      { $group: { _id: null, clrs: { $push: "$cart" } } },
-      { $project: { _id: 0, colors: "$clrs0" } },
-    ]);
+    let sellerOrder = Sellerorder.findOne({ seller: req.seller.id });
 
-    console.log(order);
+    if (!sellerOrder) {
+      res.status(404).send({ success, message: "404 Not Found." });
+    }
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      sellerOrder,
+    });
   } catch (err) {
     console.log(err);
     return res
