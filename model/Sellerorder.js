@@ -20,7 +20,7 @@ const SellerOrderSchema = new Schema(
         },
         address: {
           type: Schema.Types.ObjectId,
-          ref: "Useraddress",
+          ref: "User_Address",
         },
       }
     ],

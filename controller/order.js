@@ -2,7 +2,7 @@ const Cart = require("../model/Cart");
 const Cartitem = require("../model/Cartitem");
 const Order = require("../model/Order");
 const Sellerorder = require("../model/Sellerorder");
-const Useraddress = require("../model/Useraddress");
+const mongoose = require("mongoose");
 
 // Filter all the products based on seller_id
 // To send the filtered order for seller
@@ -140,7 +140,33 @@ const addSeller = async (sellerid, cartItem, addressid, userid) => {
 exports.getSellerOrders = async (req, res, next) => {
   let success = false;
   try {
-    let sellerOrder = Sellerorder.findOne({ seller: req.seller.id });
+    let sellerOrder = await Sellerorder.aggregate([])
+      .match({
+        seller: new mongoose.Types.ObjectId(req.seller.id),
+      })
+      .lookup({
+        from: "cartitems",
+        localField: "products.item",
+        foreignField: "_id",
+        as: "productItems",
+      })
+      .lookup({
+        from: "users",
+        localField: "products.user",
+        foreignField: "_id",
+        as: "user_info",
+      })
+      .lookup({
+        from: "user_addresses",
+        localField: "products.address",
+        foreignField: "addresses._id",
+        as: "user_address",
+      })
+      .project({
+        "products.item": "$productItems",
+        "products.user": "$user_info",
+        "products.address": "$user_address",
+      });
 
     if (!sellerOrder) {
       res.status(404).send({ success, message: "404 Not Found." });
