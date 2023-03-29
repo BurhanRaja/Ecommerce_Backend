@@ -11,7 +11,7 @@ exports.register = async (req, res, next) => {
   validateReq(req, res);
 
   try {
-    const { fname, lname, email, password, admin } = req.body;
+    const { fname, lname, email, password } = req.body;
 
     let seller = await Seller.findOne({ email: email });
     if (seller) {
@@ -21,34 +21,35 @@ exports.register = async (req, res, next) => {
       });
     }
 
+    
     const salt = await bcrypt.genSalt(10);
     const securePassword = await bcrypt.hash(password, salt);
-
+    
     seller = await Seller.create({
       first_name: fname,
       last_name: lname,
       email: email,
       password: securePassword,
-      admin: admin,
     });
-
+    
     let data = {
       seller: {
         id: seller.id,
       },
     };
-
+    
     let privateKey = SECRET_KEY;
     let authToken = jwt.sign(data, privateKey);
-
+    
     success = true;
-
+    
     return res.status(201).send({
       success,
       token: authToken,
       message: "Successfully Registered!",
     });
   } catch (error) {
+    console.log(error);
     res.status(500).send({
       success: false,
       error: "Internal Server Error!",
@@ -67,8 +68,8 @@ exports.login = async (req, res, next) => {
     const seller = await Seller.findOne({ email: email });
 
     if (!seller) {
-      return res.status(400).send({
-        error: "Invalid Credentials.",
+      return res.status(404).send({
+        error: "User does not Exists.",
       });
     }
 
@@ -96,8 +97,6 @@ exports.login = async (req, res, next) => {
       message: "Successfully Logged In!",
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ success: false, error: "Internal Server Error." });
+    res.status(500).send({ success: false, error: "Internal Server Error." });
   }
 };

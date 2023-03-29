@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const connectToMongoDB = require("./db");
 const { PORT } = require("./config/config");
+const dotenv = require("dotenv")
+dotenv.config();
 
 connectToMongoDB();
 
@@ -14,6 +16,7 @@ app.get("/", (req, res) => {
 
 app.use(cors());
 app.use(express.json());
+
 
 app.use("/api/client", require("./routes/client/index")); // Client or User
 app.use("/api/user/address", require("./routes/useraddress/index")); // User Address
@@ -37,15 +40,11 @@ app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
 });
 
-
-
-
 // TODO:
 
 // Subtract Quantity from Product info
 // Add Orders to SellerOrders
 // Cancel Order
-
 
 // ! Completed
 // Seller

@@ -8,6 +8,12 @@ const connectToMongoDB = () => {
     () => {
       console.log("Connected to Mongo.");
     },
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+    },
     (err) => {
       if (err) return console.log("Error: ", err);
       console.log(
