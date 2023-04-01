@@ -3,6 +3,9 @@ const pCategory = require("../../controller/parentCategory");
 const { body } = require("express-validator");
 const router = express.Router();
 
+// ROUTE-1: Get Categories
+router.get("/", pCategory.getAllParentCategories);
+
 router.post(
   "/create",
   [
@@ -13,9 +16,6 @@ router.post(
   ],
   pCategory.createParentCategory
 );
-
-// ROUTE-2: Get Categories
-router.get("/", pCategory.getAllParentCategories);
 
 router.put(
   "/update/:id",

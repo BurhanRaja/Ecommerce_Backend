@@ -2,17 +2,37 @@ const { validateReq } = require("../utils/vaidation");
 const Subcategory = require("../model/Sub_Category");
 
 // Get SubCategory based on category
-exports.getSubCategories = async (req, res, next) => {
+exports.getSubCategoriesofCategories = async (req, res, next) => {
   let success = false;
 
   try {
-    let subCat = await Subcategory.find({ category_id: req.params.catid });
+    let subCategories = await Subcategory.find({ category_id: req.params.catid });
 
     success = true;
 
     return res.status(200).send({
       success,
-      subCat,
+      subCategories,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal Server Error." });
+  }
+};
+
+// Get SubCategory based on category
+exports.getAllSubCategories = async (req, res, next) => {
+  let success = false;
+
+  try {
+    let subCategories = await Subcategory.find();
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      subCategories,
     });
   } catch (err) {
     return res
@@ -46,7 +66,7 @@ exports.createSubCategory = async (req, res, next) => {
       name,
       description,
       category_id,
-      parent_category_id
+      parent_category_id,
     });
 
     success = true;
@@ -98,7 +118,7 @@ exports.updateSubCategory = async (req, res, next) => {
       subCat,
     });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res
       .status(500)
       .send({ success: false, message: "Internal Server Error." });

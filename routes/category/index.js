@@ -19,6 +19,9 @@ router.post(
 // ROUTE-2: Get Categories
 router.get("/", category.getAllCategories);
 
+
+router.get("/parentcategory/:parentId", category.getCategoriesOfParent);
+
 //
 router.put("/update/:id", category.updateCategory);
 

@@ -21,28 +21,27 @@ exports.register = async (req, res, next) => {
       });
     }
 
-    
     const salt = await bcrypt.genSalt(10);
     const securePassword = await bcrypt.hash(password, salt);
-    
+
     seller = await Seller.create({
       first_name: fname,
       last_name: lname,
       email: email,
       password: securePassword,
     });
-    
+
     let data = {
       seller: {
         id: seller.id,
       },
     };
-    
+
     let privateKey = SECRET_KEY;
     let authToken = jwt.sign(data, privateKey);
-    
+
     success = true;
-    
+
     return res.status(201).send({
       success,
       token: authToken,
@@ -68,12 +67,13 @@ exports.login = async (req, res, next) => {
     const seller = await Seller.findOne({ email: email });
 
     if (!seller) {
+      console.log(seller);
       return res.status(404).send({
         error: "User does not Exists.",
       });
     }
 
-    const passwordCompare = bcrypt.compare(password, seller.password);
+    const passwordCompare = await bcrypt.compare(password, seller.password);
     if (!passwordCompare) {
       return res.status(400).send({
         error: "Invalid Credentials.",

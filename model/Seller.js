@@ -25,9 +25,9 @@ const SellerSchema = new Schema(
   }
 );
 
-SellerSchema.pre("findOneAndDelete", async function(seller, next) {
-  await Sellerinfo.deleteOne({seller_id: seller._id});
+SellerSchema.pre("findOneAndDelete", async function (seller, next) {
+  await Sellerinfo.deleteOne({ seller_id: seller._id });
   next();
-})
+});
 
 module.exports = mongoose.model("Seller", SellerSchema);

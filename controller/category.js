@@ -22,6 +22,26 @@ exports.getAllCategories = async (req, res, next) => {
   }
 };
 
+exports.getCategoriesOfParent = async (req, res, next) => {
+  let success = false;
+  try {
+    const parentId = req.params.parentId;
+    const categories = await Category.find({ parent_id: parentId });
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      categories,
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      error: "Internal Server Error",
+    });
+  }
+};
+
 // Create Category
 exports.createCategory = async (req, res, next) => {
   let success = false;

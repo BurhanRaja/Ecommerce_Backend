@@ -1,6 +1,7 @@
 const express = require("express");
 const {
-  getSubCategories,
+  getAllSubCategories,
+  getSubCategoriesofCategories,
   createSubCategory,
   updateSubCategory,
   deleteSubCategory,
@@ -9,7 +10,9 @@ const { body } = require("express-validator");
 
 const router = express.Router();
 
-router.get("/:catid", getSubCategories);
+router.get("/", getAllSubCategories);
+
+router.get("/category/:catid", getSubCategoriesofCategories);
 
 router.post(
   "/create",
