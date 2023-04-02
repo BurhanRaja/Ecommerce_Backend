@@ -26,6 +26,8 @@ const checkSeller = async (req, res, next) => {
 
   let sellerinfo = await Sellerinfo.findOne({ seller_id: data.seller.id });
 
+  console.log(sellerinfo);
+
   let seller = {
     id: data.seller.id,
     sellerinfo,
