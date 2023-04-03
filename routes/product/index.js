@@ -1,5 +1,4 @@
 const express = require("express");
-const multer = require("multer");
 
 const {
   getProducts,
@@ -24,9 +23,6 @@ const router = express.Router();
 router.get("/", checkSeller, getProducts);
 
 // ROUTE-2: Create Product
-
-
-
 router.post(
   "/create",
   [

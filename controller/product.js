@@ -1,18 +1,60 @@
 const { validateReq } = require("../utils/vaidation");
 const Product = require("../model/Product");
-const Cart = require("../model/Cart");
 
 // Admin Side ----------------------------------------------------------------------------
 exports.getProducts = async (req, res, next) => {
   let success = false;
   try {
-    const products = await Product.find({ seller_id: req.seller.id });
+    const products = await Product.aggregate([
+      {
+        $lookup: {
+          from: "parentcategories",
+          localField: "parent_category_id",
+          foreignField: "_id",
+          as: "parent_category",
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category_id",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      {
+        $lookup: {
+          from: "subcategories",
+          localField: "sub_category_id",
+          foreignField: "_id",
+          as: "sub_category",
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          thumbnail: 1,
+          parent_category: "$parent_category",
+          category: "$category",
+          sub_category: "$sub_category",
+          discount: 1,
+          price_avg: { $avg: "$images_info.price" },
+          price_min: { $min: "$images_info.price" },
+          price_max: { $max: "$images_info.price" },
+          sizes: { $concatArrays: "$images_info.sizes" },
+          info_types: { $concatArrays: "$images_info.info_types" },
+          color: { $concatArrays: "$images_info.color" },
+        },
+      },
+    ]);
+
     success = true;
     return res.status(200).send({
       success,
       products,
     });
   } catch (err) {
+    console.log(err);
     res.status(500).send({ success: false, error: "Internal Server Error." });
   }
 };
@@ -271,7 +313,7 @@ exports.getAllProducts = async (req, res, next) => {
     }
     if (filters.price) {
       price_range = filters.price.split(",");
-      updFilters.price = {
+      updFilters.images_info.price = {
         $gte: Number(price_range[0]) || 0,
         $lte: Number(price_range[1]) || 1000000,
       };
