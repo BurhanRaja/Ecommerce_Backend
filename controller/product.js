@@ -1,11 +1,17 @@
 const { validateReq } = require("../utils/vaidation");
 const Product = require("../model/Product");
+const mongoose = require("mongoose");
 
 // Admin Side ----------------------------------------------------------------------------
 exports.getProducts = async (req, res, next) => {
   let success = false;
   try {
     const products = await Product.aggregate([
+      {
+        $match: {
+          seller_id: new mongoose.Types.ObjectId(req.seller.id),
+        },
+      },
       {
         $lookup: {
           from: "parentcategories",
@@ -34,16 +40,33 @@ exports.getProducts = async (req, res, next) => {
         $project: {
           name: 1,
           thumbnail: 1,
-          parent_category: "$parent_category",
-          category: "$category",
-          sub_category: "$sub_category",
+          parent_category: { $first: "$parent_category" },
+          category: { $first: "$category" },
+          sub_category: { $first: "$sub_category" },
           discount: 1,
           price_avg: { $avg: "$images_info.price" },
           price_min: { $min: "$images_info.price" },
           price_max: { $max: "$images_info.price" },
-          sizes: { $concatArrays: "$images_info.sizes" },
-          info_types: { $concatArrays: "$images_info.info_types" },
+          sizes: {
+            $reduce: {
+              input: "$images_info",
+              initialValue: [],
+              in: {
+                $setUnion: ["$$value", "$$this.sizes"],
+              },
+            },
+          },
+          info_types: {
+            $reduce: {
+              input: "$images_info",
+              initialValue: [],
+              in: {
+                $setUnion: ["$$value", "$$this.info_types"],
+              },
+            },
+          },
           color: { $concatArrays: "$images_info.color" },
+          quantity: { $sum: "$images_info.quantity" },
         },
       },
     ]);
