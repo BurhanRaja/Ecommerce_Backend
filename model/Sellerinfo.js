@@ -7,7 +7,7 @@ const SellerInfoSchema = new Schema(
       required: true,
     },
     company_type: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
     },
     company_website: {

@@ -65,7 +65,7 @@ exports.getProducts = async (req, res, next) => {
               },
             },
           },
-          color: { $concatArrays: "$images_info.color" },
+          colors: { $concatArrays: "$images_info.color" },
           quantity: { $sum: "$images_info.quantity" },
         },
       },
