@@ -37,13 +37,21 @@ exports.getProducts = async (req, res, next) => {
         },
       },
       {
+        $lookup: {
+          from: "discounts",
+          localField: "discount",
+          foreignField: "_id",
+          as: "discount",
+        },
+      },
+      {
         $project: {
           name: 1,
           thumbnail: 1,
           parent_category: { $first: "$parent_category" },
           category: { $first: "$category" },
           sub_category: { $first: "$sub_category" },
-          discount: 1,
+          discount: { $first: "$discount" },
           price_avg: { $avg: "$images_info.price" },
           price_min: { $min: "$images_info.price" },
           price_max: { $max: "$images_info.price" },
@@ -389,16 +397,88 @@ exports.singleProduct = async (req, res, next) => {
       return res.status(404).send({ success, message: "404 Not Found" });
     }
 
-    product = await Product.findById(req.params.id)
-      .populate({
-        path: "discount",
-        model: "Discount",
-      })
-      .populate({
-        path: "seller_info",
-        model: "Sellerinfo",
-      })
-      .exec();
+    product = await Product.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(req.params.id) },
+      },
+      {
+        $lookup: {
+          from: "parentcategories",
+          localField: "parent_category_id",
+          foreignField: "_id",
+          as: "parent_category",
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category_id",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      {
+        $lookup: {
+          from: "subcategories",
+          localField: "sub_category_id",
+          foreignField: "_id",
+          as: "sub_category",
+        },
+      },
+      {
+        $lookup: {
+          from: "discounts",
+          localField: "discount",
+          foreignField: "_id",
+          as: "discount",
+        },
+      },
+      {
+        $lookup: {
+          from: "sellerinfos",
+          localField: "seller_info",
+          foreignField: "_id",
+          as: "sellerinfo",
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          description: 1,
+          thumbnail: 1,
+          price_avg: { $avg: "$images_info.price" },
+          price_min: { $min: "$images_info.price" },
+          price_max: { $max: "$images_info.price" },
+          images_info: 1,
+          parent_category: { $first: "$parent_category" },
+          category: { $first: "$category" },
+          sub_category: { $first: "$sub_category" },
+          discount: { $first: "$discount" },
+          sellerinfo: { $first: "$sellerinfo" },
+          reviews: { $avg: "$reviews.ratings" },
+          sizes: {
+            $reduce: {
+              input: "$images_info",
+              initialValue: [],
+              in: {
+                $setUnion: ["$$value", "$$this.sizes"],
+              },
+            },
+          },
+          info_types: {
+            $reduce: {
+              input: "$images_info",
+              initialValue: [],
+              in: {
+                $setUnion: ["$$value", "$$this.info_types"],
+              },
+            },
+          },
+          colors: { $concatArrays: "$images_info.color" },
+          quantity: { $sum: "$images_info.quantity" },
+        },
+      },
+    ]);
 
     success = true;
 
@@ -407,8 +487,9 @@ exports.singleProduct = async (req, res, next) => {
       product,
     });
   } catch (err) {
+    console.log(err);
     return res
-      .status(200)
+      .status(500)
       .send({ success: false, error: "Internal Server Error" });
   }
 };

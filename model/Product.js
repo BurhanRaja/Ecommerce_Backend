@@ -43,7 +43,7 @@ const ProductSchema = new Schema(
     },
     parent_category_id: {
       type: Schema.Types.ObjectId,
-      ref: "Parentcategory",
+      ref: "ParentCategory",
       required: true,
     },
     category_id: {
@@ -53,7 +53,7 @@ const ProductSchema = new Schema(
     },
     sub_category_id: {
       type: Schema.Types.ObjectId,
-      ref: "Sub_Category",
+      ref: "Subcategory",
       required: true,
     },
     reviews: [
