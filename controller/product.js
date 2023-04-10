@@ -353,15 +353,25 @@ exports.getAllProducts = async (req, res, next) => {
       updFilters["review.ratings"] = { $lte: Number(filters.rating) };
     }
 
-    let products = await Product.find(updFilters)
-      .populate({
-        path: "discount",
-        model: "Discount",
-      })
-      .populate({
-        path: "seller_info",
-        model: "Sellerinfo",
-      });
+    let products = await Product.aggregate([
+      {
+        $lookup: {
+          from: "discounts",
+          localField: "discount",
+          foreignField: "_id",
+          as: "discount",
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          description: 1,
+          thumbnail: 1,
+          price: { $min: "$images_info.price" },
+          discount: { $first: "$discount" },
+        },
+      },
+    ]);
 
     if (filters.discount) {
       products = products.filter(
