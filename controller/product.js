@@ -507,9 +507,9 @@ exports.getImageInfo = async (req, res, next) => {
 
     let updFilter = {};
 
-    if (filters.size) updFilter.size = filters.size;
+    if (filters.size) updFilter.sizes = filters.size;
     if (filters.color) updFilter.color = filters.color;
-    if (filters.info_type) updFilter.info_type = filters.info_type;
+    if (filters.info_type) updFilter.info_types = filters.info_type;
 
     let newFilter = {};
     newFilter["$elemMatch"] = updFilter;
@@ -528,7 +528,25 @@ exports.getImageInfo = async (req, res, next) => {
       imageInfo,
     });
   } catch (err) {
-    console.log(err);
+    return res
+      .status(500)
+      .send({ success: false, error: "Internal Server Error" });
+  }
+};
+
+exports.getTrendingProducts = async (req, res, next) => {
+  let success = true;
+  try {
+    let trendingProducts = await Product.find({ "reviews.ratings": { $gte: 4 } });
+
+    success = true;
+
+    return res.status(200).send({
+      success: true,
+      products: trendingProducts,
+    })
+
+  } catch (err) {
     return res
       .status(500)
       .send({ success: false, error: "Internal Server Error" });

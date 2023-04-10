@@ -11,6 +11,7 @@ const {
   deleteReview,
   singleProduct,
   getImageInfo,
+  getTrendingProducts
 } = require("../../controller/product");
 const { body } = require("express-validator");
 const checkSeller = require("../../middleware/checkSeller");
@@ -78,5 +79,8 @@ router.get("/:id", singleProduct);
 
 // ROUTE-3: Image Info
 router.get("/filter/images/:id", getImageInfo);
+
+// ROUTE-4: Trending Product
+router.get("/trending/products", getTrendingProducts);
 
 module.exports = router;

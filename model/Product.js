@@ -54,7 +54,6 @@ const ProductSchema = new Schema(
     sub_category_id: {
       type: Schema.Types.ObjectId,
       ref: "Subcategory",
-      required: true,
     },
     reviews: [
       {
