@@ -6,7 +6,7 @@ exports.getInfo = async (req, res, next) => {
   let success = false;
 
   try {
-    let info = Sellerinfo.findById(req.seller.id);
+    let info = await Sellerinfo.findOne({ seller_id: req.seller.id });
 
     if (!info) {
       return res.status(404).send({ success, message: "404 Not Found." });
