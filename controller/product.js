@@ -517,14 +517,13 @@ exports.getImageInfo = async (req, res, next) => {
 
     let updFilter = {};
 
-    if (filters.size) updFilter.sizes = filters.size;
     if (filters.color) updFilter.color = filters.color;
-    if (filters.info_type) updFilter.info_types = filters.info_type;
+    updFilter._id = req.params.itemId;
 
     let newFilter = {};
     newFilter["$elemMatch"] = updFilter;
 
-    let imageInfo = await Product.find(
+    let imageInfo = await Product.findOne(
       { id: req.params.id, images_info: newFilter },
       {
         "images_info.$": 1,
@@ -547,15 +546,16 @@ exports.getImageInfo = async (req, res, next) => {
 exports.getTrendingProducts = async (req, res, next) => {
   let success = true;
   try {
-    let trendingProducts = await Product.find({ "reviews.ratings": { $gte: 4 } });
+    let trendingProducts = await Product.find({
+      "reviews.ratings": { $gte: 4 },
+    });
 
     success = true;
 
     return res.status(200).send({
       success: true,
       products: trendingProducts,
-    })
-
+    });
   } catch (err) {
     return res
       .status(500)

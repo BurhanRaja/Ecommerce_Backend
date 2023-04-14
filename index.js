@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const connectToMongoDB = require("./db");
 const { PORT } = require("./config/config");
-const dotenv = require("dotenv")
+const dotenv = require("dotenv");
 dotenv.config();
 
 connectToMongoDB();
@@ -16,7 +16,6 @@ app.get("/", (req, res) => {
 
 app.use(cors());
 app.use(express.json());
-
 
 app.use("/api/client", require("./routes/client/index")); // Client or User
 app.use("/api/user/address", require("./routes/useraddress/index")); // User Address

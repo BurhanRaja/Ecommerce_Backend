@@ -14,7 +14,8 @@ exports.register = async (req, res, next) => {
     const { fname, lname, email, password, phone } = req.body;
 
     let user = await User.findOne({ email: req.body.email });
-    if (user) {
+
+    if (user !== null) {
       return res.status(400).send({
         success,
         error: "User already Exists.",
@@ -43,14 +44,14 @@ exports.register = async (req, res, next) => {
 
     success = true;
 
-    return res.status(201).send({
+    return res.status(200).send({
       success,
       token: authToken,
       message: "Successfully Registered!",
     });
+
   } catch (err) {
-    console.log(err);
-    res
+    return res
       .status(500)
       .send({ success: false, error: "Internal Server Error." });
   }
@@ -96,8 +97,6 @@ exports.login = async (req, res, next) => {
       message: "Successfully Logged In!",
     });
   } catch (err) {
-    res
-      .status(500)
-      .send({ success: false, error: "Internal Server Error." });
+    res.status(500).send({ success: false, error: "Internal Server Error." });
   }
 };

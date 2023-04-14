@@ -9,7 +9,6 @@ const ProductSchema = new Schema(
     images_info: {
       type: [
         {
-          _id: String,
           images: [String],
           color: String,
           sizes: [String],

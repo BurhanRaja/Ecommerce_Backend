@@ -78,7 +78,7 @@ router.get("/all/products", getAllProducts);
 router.get("/:id", singleProduct);
 
 // ROUTE-3: Image Info
-router.get("/filter/images/:id", getImageInfo);
+router.get("/filter/images/:itemId/:id", getImageInfo);
 
 // ROUTE-4: Trending Product
 router.get("/trending/products", getTrendingProducts);

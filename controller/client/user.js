@@ -10,14 +10,12 @@ exports.getUser = async (req, res, next) => {
     const user = await User.findById(req.user.id).select("-password");
 
     success = true;
-
     return res.send({
       success,
       user,
     });
   } catch (err) {
-    console.log(err);
-    res
+    return res
       .status(500)
       .send({ success: false, error: "Internal Server Occurred." });
   }

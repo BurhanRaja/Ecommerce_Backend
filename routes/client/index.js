@@ -30,7 +30,7 @@ router.post(
     body("password", "Please enter a strong password").isLength({ min: 5 }),
     body("phone", "Please Enter only 10 numbers").isLength({
       min: 10,
-      max: 10,
+      max: 15,
     }),
   ],
   userAuth.register
