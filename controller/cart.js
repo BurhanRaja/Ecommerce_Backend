@@ -5,7 +5,7 @@ const Cartitem = require("../model/Cartitem");
 exports.getCart = async (req, res, next) => {
   let success = false;
   try {
-    let cart = await Cart.findOne({ user_id: req.user.id, is_active: true });
+    let cart = await Cart.findOne({ user_id: req.user.id, is_active: true }).populate("cartItems");
 
     if (!cart) {
       return res.status(404).send({ success, message: "404 Not Found." });
@@ -143,7 +143,7 @@ exports.addTotal = async (req, res, next) => {
     ]);
 
     console.log(totalPrice);
-    return
+    return;
 
     success = true;
 

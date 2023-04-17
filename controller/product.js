@@ -486,6 +486,7 @@ exports.singleProduct = async (req, res, next) => {
           },
           colors: { $concatArrays: "$images_info.color" },
           quantity: { $sum: "$images_info.quantity" },
+          seller_id: 1
         },
       },
     ]);
