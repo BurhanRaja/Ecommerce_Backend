@@ -26,6 +26,10 @@ const OrderSchema = new Schema({
   is_delivered: {
     type: Boolean,
     required: true
+  },
+  total: {
+    type: Number,
+    required: true
   }
 });
 

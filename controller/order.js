@@ -37,9 +37,9 @@ exports.getAllOrders = async (req, res, next) => {
   let success = false;
 
   try {
-    let order = await Order({ user: req.user.id });
+    let orders = await Order({ user: req.user.id });
 
-    if (!order) {
+    if (!orders) {
       return res.status(404).send({ success, message: "404 Not Found" });
     }
 
@@ -47,7 +47,7 @@ exports.getAllOrders = async (req, res, next) => {
 
     return res.status(200).send({
       success,
-      order,
+      orders,
     });
   } catch (err) {
     return res

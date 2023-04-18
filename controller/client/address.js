@@ -11,7 +11,7 @@ exports.getUserAdresses = async (req, res, next) => {
 
     return res.status(200).send({
       success,
-      userAddress,
+      userAddress: userAddress[0]?.addresses,
     });
   } catch (err) {
     return res
@@ -37,20 +37,43 @@ exports.createUserAddress = async (req, res, next) => {
       address_type,
     } = req.body;
 
-    let address = await Useraddress.create({
+    let address = await Useraddress.findOne({
       user_id: req.user.id,
-      addresses: [
-        {
-          address_line_1,
-          address_line_2,
-          city,
-          state,
-          country,
-          address_type,
-          postal_code,
-        },
-      ],
     });
+
+    if (!address) {
+      address = await Useraddress.create({
+        user_id: req.user.id,
+        addresses: [
+          {
+            address_line_1,
+            address_line_2,
+            city,
+            state,
+            country,
+            address_type,
+            postal_code,
+          },
+        ],
+      });
+    } else {
+      address = await Useraddress.findOneAndUpdate(
+        { _id: address._id, user_id: req.user.id },
+        {
+          $push: {
+            addresses: {
+              address_line_1,
+              address_line_2,
+              city,
+              state,
+              postal_code,
+              country,
+              address_type,
+            },
+          },
+        }
+      );
+    }
 
     success = true;
 
@@ -65,47 +88,17 @@ exports.createUserAddress = async (req, res, next) => {
   }
 };
 
-// Add more than 1 user address
-exports.addAddress = async (req, res, next) => {
+// Get Single Address
+exports.getSingleAddress = async (req, res, next) => {
   let success = true;
 
-  validateReq(req, res);
-
   try {
-    const {
-      address_line_1,
-      address_line_2,
-      city,
-      state,
-      postal_code,
-      country,
-      address_type,
-    } = req.body;
-
-    let address = await Useraddress.findOne({
-      id: req.params.id,
-      user_id: req.user.id,
-    });
-
-    if (!address) {
-      return res.status(404).send({ success, message: "404 Not Found." });
-    }
-
-    address = await Useraddress.findOneAndUpdate(
-      { id: req.params.id, user_id: req.user.id },
+    let address = await Useraddress.findOne(
       {
-        $push: {
-          addresses: {
-            address_line_1,
-            address_line_2,
-            city,
-            state,
-            postal_code,
-            country,
-            address_type,
-          },
-        },
-      }
+        user_id: req.user.id,
+        "addresses._id": req.params.id,
+      },
+      { addresses: { $elemMatch: { _id: req.params.id } } }
     );
 
     success = true;
@@ -114,9 +107,7 @@ exports.addAddress = async (req, res, next) => {
       success,
       address,
     });
-  } catch (err) {
-    res.status(404).send({ success, message: "404 Not Found" });
-  }
+  } catch (err) {}
 };
 
 // Update Address

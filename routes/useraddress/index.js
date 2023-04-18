@@ -24,22 +24,7 @@ router.post(
   uadd.createUserAddress
 );
 
-router.post(
-  "/add/:id",
-  [
-    body("address_line_1", "Please enter at least 10 characters.").isLength({
-      min: 10,
-    }),
-    body("address_line_2", "Please enter at least 10 characters.").isLength({
-      min: 10,
-    }),
-    body("city", "Please enter at least 3 characters.").isLength({ min: 3 }),
-    body("country", "Please enter at least 3 characters.").isLength({ min: 3 }),
-    body("state", "Please enter at least 3 characters.").isLength({ min: 3 }),
-  ],
-  checkUser,
-  uadd.addAddress
-);
+router.get("/:id", checkUser, uadd.getSingleAddress);
 
 router.put(
   "/update/:id",

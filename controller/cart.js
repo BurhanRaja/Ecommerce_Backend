@@ -1,11 +1,21 @@
 const Cart = require("../model/Cart");
 const Cartitem = require("../model/Cartitem");
+const Product = require("../model/Product");
 
 // Get Current Active Cart
 exports.getCart = async (req, res, next) => {
   let success = false;
   try {
-    let cart = await Cart.findOne({ user_id: req.user.id, is_active: true }).populate("cartItems");
+    let cart = await Cart.findOne({
+      user_id: req.user.id,
+      is_active: true,
+    }).populate({
+      path: "cartItems",
+      populate: {
+        path: "product",
+        model: Product,
+      },
+    });
 
     if (!cart) {
       return res.status(404).send({ success, message: "404 Not Found." });
@@ -98,7 +108,7 @@ exports.removeFromCart = async (req, res, next) => {
         user_id: req.user.id,
       },
       {
-        $pull: { cartItems: { _id: req.params.itemid } },
+        $pull: { cartItems: req.params.itemid },
       }
     );
 
@@ -120,36 +130,29 @@ exports.addTotal = async (req, res, next) => {
   let success = true;
 
   try {
-    let { total_price } = req.body;
-
-    let cart = await Cart.findOne({ id: req.params.id });
+    let cart = await Cart.findOne({ user_id: req.user.id });
 
     if (!cart) {
       return res.status(404).send({ success, message: "404 Not Found" });
     }
 
-    cart = await Cart.findOne({ id: req.params.id });
-
     let totalPrice = await Cartitem.aggregate([
       {
-        $match: { id: { $in: cart.cartItems } },
+        $match: { _id: { $in: cart.cartItems } },
       },
       {
         $group: {
-          _id: null,
-          sum_val: { $sum: "$price" },
+          _id: '',
+          total_price: { $sum: "$price" },
         },
       },
     ]);
-
-    console.log(totalPrice);
-    return;
 
     success = true;
 
     return res.status(200).send({
       success,
-      cart,
+      totalPrice: totalPrice[0]?.total_price,
     });
   } catch (err) {
     return res

@@ -19,6 +19,6 @@ router.post("/addtocart", checkUser, addToCart);
 router.delete("/remove/:id/:itemid", checkUser, removeFromCart);
 
 // ROUTE-4: Add total
-router.put("/add/total", addTotal);
+router.put("/add/total", checkUser, addTotal);
 
 module.exports = router;
