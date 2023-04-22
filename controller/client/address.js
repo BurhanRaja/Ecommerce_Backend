@@ -105,9 +105,13 @@ exports.getSingleAddress = async (req, res, next) => {
 
     return res.status(200).send({
       success,
-      address,
+      address: address?.addresses[0],
     });
-  } catch (err) {}
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal Server Error." });
+  }
 };
 
 // Update Address

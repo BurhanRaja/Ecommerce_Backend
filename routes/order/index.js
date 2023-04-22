@@ -10,9 +10,9 @@ const {
 
 const router = Router();
 
-router.get("/:id", checkUser, getSingleOrder);
-
 router.get("/all", checkUser, getAllOrders);
+
+router.get("/:id", checkUser, getSingleOrder);
 
 router.post("/create", checkUser, createOrder);
 

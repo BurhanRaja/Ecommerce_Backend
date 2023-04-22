@@ -3,41 +3,16 @@ const Cartitem = require("../model/Cartitem");
 const Order = require("../model/Order");
 const Sellerorder = require("../model/Sellerorder");
 const mongoose = require("mongoose");
+const Useraddress = require("../model/Useraddress");
 
 // Filter all the products based on seller_id
 // To send the filtered order for seller
-
-exports.getSingleOrder = async (req, res, next) => {
-  let success = false;
-
-  try {
-    let order = await Order.findOne({
-      id: req.params.id,
-      user_id: req.user.id,
-    });
-
-    if (!order) {
-      return res.status(404).send({ success, message: "404 Not Found" });
-    }
-
-    success = true;
-
-    return res.status(200).send({
-      success,
-      order,
-    });
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ success: false, error: "Internal Server Error." });
-  }
-};
 
 exports.getAllOrders = async (req, res, next) => {
   let success = false;
 
   try {
-    let orders = await Order({ user: req.user.id });
+    let orders = await Order.find({ user: req.user.id });
 
     if (!orders) {
       return res.status(404).send({ success, message: "404 Not Found" });
@@ -56,12 +31,69 @@ exports.getAllOrders = async (req, res, next) => {
   }
 };
 
+exports.getSingleOrder = async (req, res, next) => {
+  let success = false;
+
+  try {
+    let order = await Order.findOne({
+      id: req.params.id,
+      user_id: req.user.id,
+    }).populate({
+      path: "cart",
+      populate: {
+        path: "cartItems",
+        populate: {
+          path: "product",
+          model: "Product",
+        },
+        model: "Cartitem",
+      },
+    });
+
+    if (!order) {
+      return res.status(404).send({ success, message: "404 Not Found" });
+    }
+
+    let address = await Useraddress.findOne(
+      {
+        user_id: req.user.id,
+        "addresses._id": order.address,
+      },
+      { addresses: { $elemMatch: { _id: order.address } } }
+    );
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      order: {
+        _id: order._id,
+        cart: order.cart,
+        address: address.addresses[0],
+        total: order.total,
+        date: order,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ success: false, error: "Internal Server Error." });
+  }
+};
+
 exports.createOrder = async (req, res, next) => {
   let success = false;
 
   try {
-    const { cart_id, address_id, payment_type, payment_status, is_delivered } =
-      req.body;
+    const {
+      cart_id,
+      address_id,
+      payment_type,
+      payment_status,
+      is_delivered,
+      total,
+    } = req.body;
 
     let order = await Order.create({
       user: req.user.id,
@@ -70,6 +102,7 @@ exports.createOrder = async (req, res, next) => {
       payment_type,
       payment_status,
       is_delivered,
+      total,
     });
 
     let cart = await Cart.findOneAndUpdate(
