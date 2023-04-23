@@ -6,6 +6,8 @@ const router = express.Router();
 // ROUTE-1: Get Categories
 router.get("/", pCategory.getAllParentCategories);
 
+router.get("/:id", pCategory.getSingleParentCategory);
+
 router.post(
   "/create",
   [

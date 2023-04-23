@@ -486,7 +486,7 @@ exports.singleProduct = async (req, res, next) => {
           },
           colors: { $concatArrays: "$images_info.color" },
           quantity: { $sum: "$images_info.quantity" },
-          seller_id: 1
+          seller_id: 1,
         },
       },
     ]);
@@ -561,5 +561,27 @@ exports.getTrendingProducts = async (req, res, next) => {
     return res
       .status(500)
       .send({ success: false, error: "Internal Server Error" });
+  }
+};
+
+exports.getSellerProductCount = async (req, res) => {
+  let success = false;
+  try {
+    let product = await Product.find({
+      seller_id: req.seller.id,
+    }).count();
+
+
+    success = true;
+    
+    return res.status(200).send({
+      success,
+      productcount: product,
+    });
+  } catch (err) {
+    console.log(err)
+    return res
+    .status(500)
+    .send({ success: false, error: "Internal Server Error" });
   }
 };

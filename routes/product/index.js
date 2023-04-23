@@ -11,7 +11,8 @@ const {
   deleteReview,
   singleProduct,
   getImageInfo,
-  getTrendingProducts
+  getTrendingProducts,
+  getSellerProductCount
 } = require("../../controller/product");
 const { body } = require("express-validator");
 const checkSeller = require("../../middleware/checkSeller");
@@ -60,6 +61,8 @@ router.put(
 // ROUTE-4: Delete Product
 router.delete("/delete/:id", checkSeller, deleteProduct);
 
+router.get("/seller/count", checkSeller, getSellerProductCount);
+
 // Client
 // ROUTE-1: Write a Review
 router.post("/add/review", checkUser, addReview);
@@ -82,5 +85,6 @@ router.get("/filter/images/:itemId/:id", getImageInfo);
 
 // ROUTE-4: Trending Product
 router.get("/trending/products", getTrendingProducts);
+
 
 module.exports = router;

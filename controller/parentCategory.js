@@ -22,6 +22,26 @@ exports.getAllParentCategories = async (req, res, next) => {
   }
 };
 
+exports.getSingleParentCategory = async (req, res) => {
+  let success = false;
+  try {
+    const pCategory = await ParentCategory.findOne({ _id: req.params.id });
+    if (!pCategory) {
+      res.status(404).send({ success, error: "404 Not Found" });
+    }
+    success = true;
+    return res.status(200).send({
+      success,
+      pCategory,
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      error: "Internal Server Error",
+    });
+  }
+};
+
 // Create Parent Category
 exports.createParentCategory = async (req, res, next) => {
   let success = false;
