@@ -25,6 +25,30 @@ exports.getInfo = async (req, res, next) => {
   }
 };
 
+exports.getAllSellerInfo = async (req, res) => {
+  let success = false;
+
+  try {
+    let sellerinfo = await Sellerinfo.find(
+      {
+        company_type: req.params.parentid
+      }
+    );
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      companies: sellerinfo,
+    });
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal Server Error." });
+  }
+};
+
 // Create Info
 exports.createInfo = async (req, res, next) => {
   let success = false;

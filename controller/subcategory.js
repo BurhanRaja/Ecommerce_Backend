@@ -6,7 +6,9 @@ exports.getSubCategoriesofCategories = async (req, res, next) => {
   let success = false;
 
   try {
-    let subCategories = await Subcategory.find({ category_id: req.params.catid });
+    let subCategories = await Subcategory.find({
+      category_id: req.params.catid,
+    });
 
     success = true;
 
@@ -35,6 +37,38 @@ exports.getAllSubCategories = async (req, res, next) => {
       subCategories,
     });
   } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal Server Error." });
+  }
+};
+
+// Parent categories from Sub categories
+exports.getAllSubCategoriesfromParent = async (req, res) => {
+  let success = false;
+
+  try {
+    let { categories } = req.query;
+
+    let params = {};
+
+    params['parent_category_id'] = req.params.id;
+    if (categories) {
+      params['category_id'] = { $in: categories.split(",") };
+    }
+
+    let subcategories = await Subcategory.find({
+      ...params,
+    });
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      subcategories,
+    });
+  } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ success: false, message: "Internal Server Error." });

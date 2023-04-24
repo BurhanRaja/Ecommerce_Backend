@@ -331,20 +331,22 @@ exports.getAllProducts = async (req, res, next) => {
     let price_range = [];
 
     if (filters.company) {
-      updFilters.seller_info = { $in: filters.company.split(",") };
+      updFilters["seller_info"] =  {
+        $in: filters.company.split(",")
+      };
     }
     if (filters.parentcategory) {
-      updFilters.parent_category_id = filters.parentcategory;
+      updFilters["parent_category_id"] = filters.parentcategory;
     }
     if (filters.category) {
-      updFilters.category_id = { $in: filters.category.split(",") };
+      updFilters["category_id"] = { $in: filters.category.split(",") };
     }
     if (filters.subcategory) {
-      updFilters.sub_category_id = { $in: filters.subcategory.split(",") };
+      updFilters["sub_category_id"] = { $in: filters.subcategory.split(",") };
     }
     if (filters.price) {
       price_range = filters.price.split(",");
-      updFilters.images_info.price = {
+      updFilters["images_info.price"] = {
         $gte: Number(price_range[0]) || 0,
         $lte: Number(price_range[1]) || 1000000,
       };
@@ -353,25 +355,9 @@ exports.getAllProducts = async (req, res, next) => {
       updFilters["review.ratings"] = { $lte: Number(filters.rating) };
     }
 
-    let products = await Product.aggregate([
-      {
-        $lookup: {
-          from: "discounts",
-          localField: "discount",
-          foreignField: "_id",
-          as: "discount",
-        },
-      },
-      {
-        $project: {
-          name: 1,
-          description: 1,
-          thumbnail: 1,
-          price: { $min: "$images_info.price" },
-          discount: { $first: "$discount" },
-        },
-      },
-    ]);
+    let products = await Product.find({
+      ...updFilters,
+    });
 
     if (filters.discount) {
       products = products.filter(
@@ -571,17 +557,16 @@ exports.getSellerProductCount = async (req, res) => {
       seller_id: req.seller.id,
     }).count();
 
-
     success = true;
-    
+
     return res.status(200).send({
       success,
       productcount: product,
     });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res
-    .status(500)
-    .send({ success: false, error: "Internal Server Error" });
+      .status(500)
+      .send({ success: false, error: "Internal Server Error" });
   }
 };

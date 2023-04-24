@@ -5,10 +5,13 @@ const {
   createInfo,
   updateInfo,
   deleteInfo,
+  getAllSellerInfo,
 } = require("../../controller/seller/info");
 const { body } = require("express-validator");
 
 const router = express.Router();
+
+router.get("/all/:parentid", getAllSellerInfo);
 
 router.get("/", checkSeller, getInfo);
 
