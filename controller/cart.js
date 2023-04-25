@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Cart = require("../model/Cart");
 const Cartitem = require("../model/Cartitem");
 const Product = require("../model/Product");
@@ -106,6 +107,7 @@ exports.removeFromCart = async (req, res, next) => {
       {
         id: req.params.id,
         user_id: req.user.id,
+        is_active: true,
       },
       {
         $pull: { cartItems: req.params.itemid },
@@ -130,20 +132,33 @@ exports.addTotal = async (req, res, next) => {
   let success = true;
 
   try {
-    let cart = await Cart.findOne({ user_id: req.user.id });
+    let cart = await Cart.findOne({ user_id: req.user.id, is_active: true });
 
     if (!cart) {
       return res.status(404).send({ success, message: "404 Not Found" });
     }
 
-    let totalPrice = await Cartitem.aggregate([
+    let totalPrice = await Cart.aggregate([
       {
-        $match: { _id: { $in: cart.cartItems } },
+        $match: {
+          user_id: new mongoose.Types.ObjectId(req.user.id),
+          is_active: true,
+        },
       },
       {
-        $group: {
-          _id: '',
-          total_price: { $sum: "$price" },
+        $lookup: {
+          from: "cartitems",
+          // let: { cid: "$cartItems" },
+          // pipeline: [{ $match: { $expr: { $in: ["$$", "$$cid"] } } }],
+          localField: "cartItems",
+          foreignField: "_id",
+          as: "newcartItems",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          total: {$sum: "$newcartItems.price"},
         },
       },
     ]);
@@ -152,7 +167,7 @@ exports.addTotal = async (req, res, next) => {
 
     return res.status(200).send({
       success,
-      totalPrice: totalPrice[0]?.total_price,
+      totalPrice: totalPrice[0]?.total,
     });
   } catch (err) {
     return res

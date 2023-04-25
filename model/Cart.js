@@ -7,11 +7,11 @@ const CartSchema = new Schema({
     required: true,
   },
   cartItems: [
-   {
-    type: Schema.Types.ObjectId,
-    ref: "Cartitem",
-    required: true
-   }
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Cartitem",
+      required: true,
+    },
   ],
   total: {
     type: Number,

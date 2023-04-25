@@ -106,13 +106,13 @@ exports.createOrder = async (req, res, next) => {
     });
 
     let cart = await Cart.findOneAndUpdate(
-      { id: cart_id },
+      { id: cart_id, is_active: true },
       { $set: { is_active: false } }
-    ).populate({
-      path: "cartItems",
-    });
+    );
 
     let cartItems = await Cartitem.find({ _id: { $in: cart.cartItems } });
+
+    console.log(cartItems);
 
     for (let i = 0; i < cartItems.length; i++) {
       await addSeller(
@@ -218,7 +218,6 @@ exports.getSellerOrders = async (req, res, next) => {
       .send({ success: false, error: "Internal Server Error." });
   }
 };
-
 
 
 exports.removeOrder = async (req, res, next) => {};
