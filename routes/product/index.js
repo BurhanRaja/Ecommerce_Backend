@@ -65,7 +65,7 @@ router.get("/seller/count", checkSeller, getSellerProductCount);
 
 // Client
 // ROUTE-1: Write a Review
-router.post("/add/review", checkUser, addReview);
+router.post("/add/review/:id", checkUser, addReview);
 
 // ROUTE-2: Update Review
 router.put("/update/review/:id", checkUser, updateReview);

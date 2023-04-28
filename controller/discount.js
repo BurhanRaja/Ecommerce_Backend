@@ -32,30 +32,48 @@ exports.addDiscount = async (req, res, next) => {
   let success = false;
   validateReq(req, res);
   try {
-    const { description, discount_percentage, is_active } = req.body;
+    const { description, discount_percentage, is_active, products } = req.body;
 
-    let discount = await Discount.findOne({ discount_percentage });
+    let discount = await Discount.findOne({
+      discount_percentage,
+      seller_id: req.seller.id,
+    });
 
+    console.log(discount);
+    
     if (discount) {
       return res
-        .status(400)
-        .send({ success, message: "Discount Already present." });
+      .status(400)
+      .send({ success, message: "Discount Already present." });
     }
-
+    
     discount = await Discount.create({
       description,
       discount_percentage,
       is_active,
       seller_id: req.seller.id,
+      products,
     });
 
-    success = true;
-
-    return res.status(200).send({
-      success,
-      discount,
-    });
-  } catch (err) {
+    console.log(discount);
+    
+    await Product.updateMany(
+      {
+        _id: { $in: products },
+      },
+      {
+        $set: { discount: discount._id },
+      }
+      );
+      
+      success = true;
+      
+      return res.status(200).send({
+        success,
+        discount,
+      });
+    } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ success: false, error: "Internal Server Error." });
@@ -85,6 +103,16 @@ exports.updateDiscount = async (req, res, next) => {
     discount = await Discount.findOneAndUpdate(
       { id: req.params.id },
       { $set: updDiscount }
+    );
+
+    await Product.updateMany(
+      { discount: discount._id, seller_id: req.seller.id },
+      { $unset: { discount: "" } }
+    );
+
+    await Product.updateMany(
+      { _id: { $in: products }, seller_id: req.seller.id },
+      { $set: { discount: discount._id } }
     );
 
     success = true;
@@ -136,7 +164,10 @@ exports.productstoDiscount = async (req, res, next) => {
   try {
     const { products } = req.body;
 
-    let discount = await Discount.findOne({ id: req.params.id, seller_id: req.seller.id });
+    let discount = await Discount.findOne({
+      id: req.params.id,
+      seller_id: req.seller.id,
+    });
 
     if (!discount) {
       return res.status(404).send({ success, message: "404 Not Found" });
@@ -147,10 +178,9 @@ exports.productstoDiscount = async (req, res, next) => {
       { $set: { products } }
     );
 
-
     let product = await Product.updateMany(
       { discount: discount._id, seller_id: req.seller.id },
-      { $unset: { discount: "" } }
+      { $set: { discount: "" } }
     );
 
     product = await Product.updateMany(

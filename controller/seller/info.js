@@ -29,11 +29,9 @@ exports.getAllSellerInfo = async (req, res) => {
   let success = false;
 
   try {
-    let sellerinfo = await Sellerinfo.find(
-      {
-        company_type: req.params.parentid
-      }
-    );
+    let sellerinfo = await Sellerinfo.find({
+      company_type: req.params.parentid,
+    });
 
     success = true;
 
@@ -66,7 +64,11 @@ exports.createInfo = async (req, res, next) => {
       tax_info,
     } = req.body;
 
-    let info = await Sellerinfo.findOne({ company_name: company_name });
+    let info = await Sellerinfo.findOne({
+      company_name,
+      company_website,
+      company_type,
+    });
 
     if (info) {
       return res

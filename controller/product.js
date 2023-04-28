@@ -211,7 +211,7 @@ exports.addReview = async (req, res, next) => {
     const { content, ratings } = req.body;
 
     let reviews = await Product.findOne({
-      id: req.params.id,
+      _id: req.params.id,
       reviews: { user_id: req.user.id },
     });
 
@@ -222,16 +222,18 @@ exports.addReview = async (req, res, next) => {
     }
 
     reviews = await Product.findOneAndUpdate(
-      { id: req.params.id },
+      { _id: req.params.id },
       {
         $push: {
-          reviews: {
-            content,
-            ratings,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            user_id: req.user.id,
-          },
+          reviews: [
+            {
+              content,
+              ratings,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              user_id: req.user.id,
+            },
+          ],
         },
       }
     );
@@ -331,8 +333,8 @@ exports.getAllProducts = async (req, res, next) => {
     let price_range = [];
 
     if (filters.company) {
-      updFilters["seller_info"] =  {
-        $in: filters.company.split(",")
+      updFilters["seller_info"] = {
+        $in: filters.company.split(","),
       };
     }
     if (filters.parentcategory) {
@@ -357,7 +359,7 @@ exports.getAllProducts = async (req, res, next) => {
 
     let products = await Product.find({
       ...updFilters,
-    });
+    }).populate("discount");
 
     if (filters.discount) {
       products = products.filter(
@@ -438,6 +440,25 @@ exports.singleProduct = async (req, res, next) => {
         },
       },
       {
+        $unwind: "$reviews",
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "reviews.user_id",
+          foreignField: "_id",
+          as: "reviews.user",
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          allReviews: {
+            $push: "$reviews",
+          },
+        },
+      },
+      {
         $project: {
           name: 1,
           description: 1,
@@ -451,7 +472,8 @@ exports.singleProduct = async (req, res, next) => {
           sub_category: { $first: "$sub_category" },
           discount: { $first: "$discount" },
           sellerinfo: { $first: "$sellerinfo" },
-          reviews: { $avg: "$reviews.ratings" },
+          reviewsavg: { $avg: "$reviews.ratings" },
+          reviews: "$allReviews",
           sizes: {
             $reduce: {
               input: "$images_info",
