@@ -210,10 +210,14 @@ exports.addReview = async (req, res, next) => {
   try {
     const { content, ratings } = req.body;
 
-    let reviews = await Product.findOne({
-      _id: req.params.id,
-      reviews: { user_id: req.user.id },
-    });
+    let reviews = await Product.findOne(
+      {
+        _id: req.params.id,
+      },
+      {
+        reviews: { $elemMatch: { user_id: req.user.id } },
+      }
+    );
 
     if (reviews) {
       return res
@@ -440,25 +444,6 @@ exports.singleProduct = async (req, res, next) => {
         },
       },
       {
-        $unwind: "$reviews",
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "reviews.user_id",
-          foreignField: "_id",
-          as: "reviews.user",
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          allReviews: {
-            $push: "$reviews",
-          },
-        },
-      },
-      {
         $project: {
           name: 1,
           description: 1,
@@ -473,7 +458,6 @@ exports.singleProduct = async (req, res, next) => {
           discount: { $first: "$discount" },
           sellerinfo: { $first: "$sellerinfo" },
           reviewsavg: { $avg: "$reviews.ratings" },
-          reviews: "$allReviews",
           sizes: {
             $reduce: {
               input: "$images_info",
@@ -499,14 +483,48 @@ exports.singleProduct = async (req, res, next) => {
       },
     ]);
 
+    let allReviews = await Product.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(req.params.id) },
+      },
+      {
+        $unwind: "$reviews",
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "reviews.user_id",
+          foreignField: "_id",
+          as: "reviews.user",
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          allReviews: {
+            $push: "$reviews",
+          },
+        },
+      },
+      {
+        $project: {
+          reviews: "$allReviews",
+        },
+      },
+    ]);
+
     success = true;
+
+    const all = {
+      ...product[0],
+      reviews: allReviews[0]?.reviews,
+    };
 
     return res.status(200).send({
       success,
-      product,
+      product: all,
     });
   } catch (err) {
-    console.log(err);
     return res
       .status(500)
       .send({ success: false, error: "Internal Server Error" });
