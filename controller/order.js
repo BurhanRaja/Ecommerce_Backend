@@ -112,8 +112,6 @@ exports.createOrder = async (req, res, next) => {
 
     let cartItems = await Cartitem.find({ _id: { $in: cart.cartItems } });
 
-    console.log(cartItems);
-
     for (let i = 0; i < cartItems.length; i++) {
       await addSeller(
         cartItems[i].seller,
@@ -148,6 +146,7 @@ const addSeller = async (sellerid, cartItem, addressid, userid) => {
           item: cartItem,
           user: userid,
           address: addressid,
+          ispayed: false,
         },
       ],
     });
@@ -160,6 +159,7 @@ const addSeller = async (sellerid, cartItem, addressid, userid) => {
             item: cartItem,
             user: userid,
             address: addressid,
+            ispayed: false,
           },
         },
       }
@@ -218,6 +218,5 @@ exports.getSellerOrders = async (req, res, next) => {
       .send({ success: false, error: "Internal Server Error." });
   }
 };
-
 
 exports.removeOrder = async (req, res, next) => {};

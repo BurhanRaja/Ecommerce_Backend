@@ -32,6 +32,7 @@ exports.register = async (req, res, next) => {
 
     let customer = await stripe.customers.create(
       {
+        name: fname + " " + lname,
         email: email,
       },
       {

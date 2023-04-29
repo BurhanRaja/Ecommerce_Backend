@@ -1,37 +1,7 @@
-const { STRIPE_SECRET, STRIPE_ACCOUNT } = require("../../config/config");
+const { STRIPE_SECRET } = require("../../config/config");
 const Cards = require("../model/Cards");
 const User = require("../model/User");
 const stripe = require("stripe")(STRIPE_SECRET);
-
-// Add Customer
-exports.addCustomer = async (req, res) => {
-  let success = false;
-
-  try {
-    const { address_id } = req.body;
-
-    let user = await User.findOne({ _id: req.user.id });
-
-    let customer = await stripe.customers.create(
-      {
-        email: user.email,
-      },
-      {
-        stripeAccount: STRIPE_ACCOUNT,
-      }
-    );
-
-    success = true;
-    return res.status(200).send({
-      success,
-    });
-  } catch (err) {
-    return res.status(500).send({
-      success: false,
-      message: "Internal Server Error.",
-    });
-  }
-};
 
 // Add Card
 exports.addCard = async (req, res) => {
@@ -237,6 +207,7 @@ exports.createPayment = async (req, res) => {
     let user = await User.findOne({
       _id: req.user.id,
     });
+    
     if (oneTime) {
       const { cardNumber, cardExpMonth, cardExpYear, cardCVC, cardName } =
         req.body;
