@@ -50,7 +50,6 @@ router.put(
       min: 2,
     }),
     body("email", "Please enter correct email.").isEmail(),
-    body("password", "Please enter a strong password").isLength({ min: 5 }),
   ],
   updateSeller
 );

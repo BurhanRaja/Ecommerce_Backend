@@ -6,11 +6,15 @@ const CardSchema = new Schema(
       type: Schema.Types.ObjectId,
       required: true,
     },
-    cardsId: [
+    cards: [
       {
-        type: String,
-        required: true,
-      },
+        cardName: String,
+        cardNumber: Number,
+        cardCVC: String,
+        cardExpMonth: Number,
+        cardExpYear: Number,
+        cardType: String
+      },  
     ],
   },
   {
@@ -18,4 +22,4 @@ const CardSchema = new Schema(
   }
 );
 
-module.exports = mongoose.model("Card", CardSchema);
+module.exports = mongoose.model("Cards", CardSchema);

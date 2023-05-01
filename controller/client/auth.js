@@ -2,12 +2,7 @@ const { validateReq } = require("../../utils/vaidation");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../../model/User");
-const {
-  SECRET_KEY,
-  STRIPE_SECRET,
-  STRIPE_ACCOUNT,
-} = require("../../config/config");
-const stripe = require("stripe")(STRIPE_SECRET);
+const { SECRET_KEY } = require("../../config/config");
 
 // User Register
 exports.register = async (req, res, next) => {
@@ -30,23 +25,12 @@ exports.register = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10);
     const securePassword = await bcrypt.hash(password, salt);
 
-    let customer = await stripe.customers.create(
-      {
-        name: fname + " " + lname,
-        email: email,
-      },
-      {
-        stripeAccount: STRIPE_ACCOUNT,
-      }
-    );
-
     user = await User.create({
       first_name: fname,
       last_name: lname,
       email: email,
       password: securePassword,
       phone_number: phone,
-      custormer_id: customer.id,
     });
 
     let data = {

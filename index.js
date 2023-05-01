@@ -37,6 +37,8 @@ app.use("/api/order", require("./routes/order/index")); // Order
 
 app.use("/api/sellerorder", require("./routes/sellerorder/index")); // Seller Order
 
+app.use("/api/payments", require("./routes/payment/index")); // Payment
+
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
 });

@@ -28,29 +28,27 @@ exports.updateSeller = async (req, res, next) => {
   validateReq(req, res);
 
   try {
-    const { fname, lname, email, password, admin } = req.body;
-
-    console.log(req.body);
+    const { fname, lname, email } = req.body;
 
     const updSeller = {};
 
-    if (fname) updSeller.fname = fname;
-    if (lname) updSeller.lname = lname;
+    if (fname) updSeller.first_name = fname;
+    if (lname) updSeller.last_name = lname;
     if (email) updSeller.email = email;
-    if (admin === false || admin === true) updSeller.admin = admin;
 
-    let seller = await Seller.findById(req.seller.id);
+    let seller = await Seller.findOne({
+      _id: req.seller.id,
+    });
 
     if (!seller) {
       return res.status(404).send({ success, error: "404 Not Found." });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const securePassword = await bcrypt.hash(password, salt);
+    seller = await Seller.findOneAndUpdate(
+      { _id: req.seller.id },
+      { $set: updSeller }
+    );
 
-    if (password) updSeller.password = securePassword;
-
-    seller = await Seller.findByIdAndUpdate(req.seller.id, { $set: updSeller });
     success = true;
 
     return res.status(200).send({
@@ -58,7 +56,10 @@ exports.updateSeller = async (req, res, next) => {
       seller,
     });
   } catch (err) {
-    res.status(500).send({ success: false, error: "Internal Server Error." });
+    return res.status(500).send({
+      success: false,
+      message: "Internal Server Error.",
+    });
   }
 };
 
@@ -80,6 +81,8 @@ exports.deleteSeller = async (req, res, next) => {
       message: "User Successfully Deleted.",
     });
   } catch (err) {
-    res.status(500).send({ success: false, error: "Internal Server Error." });
+    return res
+      .status(500)
+      .send({ success: false, error: "Internal Server Error." });
   }
 };

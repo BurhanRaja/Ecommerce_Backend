@@ -111,8 +111,6 @@ exports.updateInfo = async (req, res, next) => {
       company_type,
       company_website,
       phone,
-      identity_proof,
-      tax_info,
     } = req.body;
 
     let updInfo = {};
@@ -121,8 +119,6 @@ exports.updateInfo = async (req, res, next) => {
     if (company_type) updInfo.company_type = company_type;
     if (company_website) updInfo.company_website = company_website;
     if (phone) updInfo.phone = phone;
-    if (identity_proof) updInfo.identity_proof = identity_proof;
-    if (tax_info) updInfo.tax_info = tax_info;
 
     let info = await Sellerinfo.findById(req.params.id);
 
@@ -130,7 +126,7 @@ exports.updateInfo = async (req, res, next) => {
       return res.status(404).send({
         success,
         message: "404 Not Found.",
-      });
+      }); 
     }
 
     info = await Sellerinfo.findByIdAndUpdate(req.params.id, { $set: updInfo });
