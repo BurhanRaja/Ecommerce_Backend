@@ -9,7 +9,7 @@ const CardSchema = new Schema(
     cards: [
       {
         cardName: String,
-        cardNumber: Number,
+        cardNumber: String,
         cardCVC: String,
         cardExpMonth: Number,
         cardExpYear: Number,

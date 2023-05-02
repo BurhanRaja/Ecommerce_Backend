@@ -62,7 +62,7 @@ exports.addCard = async (req, res) => {
     } else {
       await Cards.create({
         user_id: req.user.id,
-        cardsId: [
+        cards: [
           {
             cardNumber,
             cardExpMonth,
@@ -81,6 +81,7 @@ exports.addCard = async (req, res) => {
       message: "Successfully Card Added.",
     });
   } catch (err) {
+    console.log(err);
     return res.status(500).send({
       success: false,
       message: "Internal Server Error.",
