@@ -218,7 +218,6 @@ exports.createPayment = async (req, res) => {
     const {
       amount,
       cardId,
-      oneTime,
       cardNumber,
       cardExpMonth,
       cardExpYear,
@@ -229,6 +228,8 @@ exports.createPayment = async (req, res) => {
     let user = await User.findOne({
       _id: req.user.id,
     });
+    
+    let charge;
 
     if (!cardNumber && !cardExpMonth && !cardExpYear && !cardCVC) {
       return res.status(400).send({
@@ -237,64 +238,16 @@ exports.createPayment = async (req, res) => {
       });
     }
 
-    let cardToken;
-    let charge;
+    charge = await stripe.paymentIntents.create({
+      amount,
+      currency: "inr",
+      description: `Stripe Charge of amount ${amount} for One Time Payment by ${
+        user.first_name + " " + user.last_name
+      }`,
+      payment_method_types: ["card"],
+    });
 
-    if (oneTime) {
-      cardToken = await stripe.tokens.create({
-        card: {
-          number: cardNumber,
-          exp_month: cardExpMonth,
-          exp_year: cardExpYear,
-          cvc: cardCVC,
-          name: cardName,
-        },
-      });
-
-      charge = await stripe.charges.create({
-        amount,
-        currency: "inr",
-        source: cardToken.id,
-        receipt_email: user.email,
-        description: `Stripe Charge of amount ${amount} for One Time Payment by ${
-          user.first_name + " " + user.last_name
-        }`,
-      });
-    } else {
-      let card = await Cards.findOne(
-        {
-          user_id: req.user.id,
-          "cards._id": cardId,
-        },
-        {
-          "cards._id": cardId,
-        }
-      );
-
-      card = card.cards[0];
-
-      cardToken = await stripe.tokens.create({
-        card: {
-          number: card.cardNumber,
-          exp_month: card.cardExpMonth,
-          exp_year: card.cardExpYear,
-          cvc: card.cardCVC,
-          name: card.cardName,
-        },
-      });
-
-      charge = await stripe.charges.create({
-        amount,
-        currency: "inr",
-        source: cardToken.id,
-        receipt_email: user.email,
-        description: `Stripe Charge of amount ${amount} for One Time Payment by ${
-          user.first_name + " " + user.last_name
-        }`,
-      });
-    }
-
-    if (charge.status === "succeeded") {
+    if (charge.object === "payment_intent") {
       success = true;
       return res.status(200).send({
         success,
@@ -308,6 +261,7 @@ exports.createPayment = async (req, res) => {
       });
     }
   } catch (err) {
+    console.log(err);
     return res.status(500).send({
       success: false,
       message: "Internal Server Error.",

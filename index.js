@@ -45,18 +45,5 @@ app.listen(port, () => {
 
 // TODO:
 
-// Subtract Quantity from Product info
-// Add Orders to SellerOrders
-// Cancel Order
-
-// ! Completed
-// Seller
-// User
-
-// Seller Info
-// User Address
-
-// Parent Category
-// Category
-// Subcategory
-// Product
+// Handle Payment DB in Order and Create Payment
+// Handle it in frontend
