@@ -22,7 +22,10 @@ const SellerOrderSchema = new Schema(
           type: Schema.Types.ObjectId,
           ref: "User_Address",
         },
-        ispayed: Boolean
+        isPayed: {
+          type: Boolean,
+          default: false,
+        }
       },
     ],
   },

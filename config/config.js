@@ -8,6 +8,6 @@ module.exports = {
   MONGO_USER: process.env.MONGO_USER,
   MONGO_PASSWORD: process.env.MONGO_PASSWORD,
   SECRET_KEY: process.env.SECRET_KEY,
-  STRIPE_SECRET: process.env.STRIPE_SECRET_KEY,
-  STRIPE_ACCOUNT: process.env.STRIPE_ACCOUNT_ID,
+  RAZORPAY_SECRET: process.env.RAZORPAY_SECRET_KEY,
+  RAZORPAY_KEY: process.env.RAZORPAY_KEY_ID,
 };

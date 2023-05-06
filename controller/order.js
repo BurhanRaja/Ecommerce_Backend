@@ -110,6 +110,8 @@ exports.createOrder = async (req, res, next) => {
       { $set: { is_active: false } }
     );
 
+    console.log(cart.cartItems);
+
     let cartItems = await Cartitem.find({ _id: { $in: cart.cartItems } });
 
     for (let i = 0; i < cartItems.length; i++) {
@@ -166,7 +168,7 @@ const addSeller = async (sellerid, cartItem, addressid, userid) => {
     );
   }
 
-  return sellerOrder;
+  console.log(sellerOrder);
 };
 
 // Get All order based on sellerid

@@ -3,12 +3,15 @@ const cors = require("cors");
 const connectToMongoDB = require("./db");
 const { PORT } = require("./config/config");
 const dotenv = require("dotenv");
+const path = require("path");
 dotenv.config();
 
 connectToMongoDB();
 
 const app = express();
 const port = PORT;
+
+app.use(express.static("public"));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

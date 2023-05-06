@@ -107,17 +107,32 @@ exports.createProduct = async (req, res, next) => {
       parent_category_id,
     } = req.body;
 
-    const product = await Product.create({
-      name,
-      images_info,
-      thumbnail,
-      description,
-      seller_id: req.seller.id,
-      seller_info: req.seller.sellerinfo.id,
-      category_id,
-      sub_category_id,
-      parent_category_id,
-    });
+    let product;
+
+    if (sub_category_id) {
+      product = await Product.create({
+        name,
+        images_info,
+        thumbnail,
+        description,
+        seller_id: req.seller.id,
+        seller_info: req.seller.sellerinfo.id,
+        category_id,
+        sub_category_id,
+        parent_category_id,
+      });
+    } else {
+      product = await Product.create({
+        name,
+        images_info,
+        thumbnail,
+        description,
+        seller_id: req.seller.id,
+        seller_info: req.seller.sellerinfo.id,
+        category_id,
+        parent_category_id,
+      });
+    }
 
     success = true;
 
