@@ -110,8 +110,6 @@ exports.createOrder = async (req, res, next) => {
       { $set: { is_active: false } }
     );
 
-    console.log(cart.cartItems);
-
     let cartItems = await Cartitem.find({ _id: { $in: cart.cartItems } });
 
     for (let i = 0; i < cartItems.length; i++) {
@@ -167,8 +165,6 @@ const addSeller = async (sellerid, cartItem, addressid, userid) => {
       }
     );
   }
-
-  console.log(sellerOrder);
 };
 
 // Get All order based on sellerid
@@ -214,11 +210,49 @@ exports.getSellerOrders = async (req, res, next) => {
       sellerOrder,
     });
   } catch (err) {
-    console.log(err);
     return res
       .status(500)
       .send({ success: false, error: "Internal Server Error." });
   }
 };
 
-exports.removeOrder = async (req, res, next) => {};
+exports.updateOrder = async (req, res) => {
+  let success = false;
+  try {
+    const { is_delivered, payment_status } = req.body;
+
+    let order = await Order.findOne({
+      _id: req.params.id,
+    });
+
+    if (!order) {
+      return res.status(404).send({
+        success,
+        message: "Order Not Found",
+      });
+    }
+
+    await Order.findOneAndUpdate(
+      {
+        _id: req.params.id,
+      },
+      {
+        $set: {
+          is_delivered,
+          payment_status,
+        },
+      }
+    );
+
+    success = true;
+
+    return res.status(200).send({
+      success,
+      message: "Order Updated",
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ success: false, error: "Internal Server Error." });
+  }
+};

@@ -38,7 +38,7 @@ exports.addToCart = async (req, res, next) => {
   let success = false;
 
   try {
-    const product = req.body;
+    let product = req.body;
     let pDetail = {};
 
     if (product.price) pDetail.price = product.price;
@@ -55,6 +55,18 @@ exports.addToCart = async (req, res, next) => {
     if (product.thumbnail) pDetail.product_info.thumbnail = product.thumbnail;
 
     pDetail.is_ordered = false;
+
+    product = await Product.findOneAndUpdate(
+      {
+        _id: pDetail.product,
+        "images_info.color": pDetail.product_info.color,
+      },
+      {
+        $inc: {
+          "images_info.quantity": -Number(pDetail.quantity),
+        },
+      }
+    );
 
     let cartItem = await Cartitem.create(pDetail);
 
@@ -95,11 +107,26 @@ exports.addToCart = async (req, res, next) => {
 exports.removeFromCart = async (req, res, next) => {
   let success = false;
   try {
+
     let cart = await Cart.findOne({ id: req.params.id, user_id: req.user.id });
 
     if (!cart) {
       return res.status(404).send({ success, message: "404 Not Found" });
     }
+
+    let cartItem = await Cartitem.findOne({ id: req.params.itemid });
+
+    await Product.findOneAndUpdate(
+      {
+        _id: cartItem.product,
+        "images_info.color": cartItem.product_info.color,
+      },
+      {
+        $inc: {
+          "images_info.quantity": cartItem.quantity,
+        },
+      }
+    );
 
     let cartItems = await Cartitem.findOneAndDelete({ id: req.params.itemid });
 
@@ -158,7 +185,7 @@ exports.addTotal = async (req, res, next) => {
       {
         $project: {
           _id: 1,
-          total: {$sum: "$newcartItems.price"},
+          total: { $sum: "$newcartItems.price" },
         },
       },
     ]);

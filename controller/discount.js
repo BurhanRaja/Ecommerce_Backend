@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Discount = require("../model/Discount");
 const Product = require("../model/Product");
 const { validateReq } = require("../utils/vaidation");
@@ -215,16 +216,35 @@ exports.getDiscount = async (req, res, next) => {
       return res.status(404).send({ success, message: "404 Not Found" });
     }
 
-    discount = await Discount.findOne({ id: req.params.id }).populate({
-      path: "products",
-      model: "Product",
-    });
+    discount = await Discount.aggregate([
+      {
+        $match: {_id: new mongoose.Types.ObjectId(req.params.id)}
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products",
+          foreignField: "_id",
+          as: "newProducts",
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          description: 1,
+          discount_percentage: 1,
+          products: "$newProducts",
+          is_active: 1,
+          createdAt: 1
+        }
+      }
+    ]);
 
     success = true;
 
     return res.status(200).send({
       success,
-      discount,
+      discount: discount[0],
     });
   } catch (err) {
     return res

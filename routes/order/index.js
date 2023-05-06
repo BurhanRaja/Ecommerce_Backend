@@ -6,6 +6,7 @@ const {
   getAllOrders,
   createOrder,
   getSellerOrders,
+  updateOrder,
 } = require("../../controller/order");
 
 const router = Router();
@@ -17,5 +18,7 @@ router.get("/:id", checkUser, getSingleOrder);
 router.post("/create", checkUser, createOrder);
 
 router.get("/seller/order", checkSeller, getSellerOrders);
+
+router.put("/order/update/:", updateOrder);
 
 module.exports = router;
