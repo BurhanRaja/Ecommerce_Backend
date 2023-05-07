@@ -12,7 +12,8 @@ const {
   singleProduct,
   getImageInfo,
   getTrendingProducts,
-  getSellerProductCount
+  getSellerProductCount,
+  getSingleProduct,
 } = require("../../controller/product");
 const { body } = require("express-validator");
 const checkSeller = require("../../middleware/checkSeller");
@@ -35,7 +36,7 @@ router.post(
     }),
     body("thumbnail", "Please enter at least 10 characters").isLength({
       min: 10,
-    })
+    }),
   ],
   checkSeller,
   createProduct
@@ -72,7 +73,7 @@ router.put("/update/review/:id", checkUser, updateReview);
 
 // ROUTE-3: Delete Review
 router.delete("/delete/review/:id/:reviewid", checkUser, deleteReview);
-  
+
 // For All
 // ROUTE-1: Get All Products
 router.get("/all/products", getAllProducts);
@@ -85,6 +86,5 @@ router.get("/filter/images/:itemId/:id", getImageInfo);
 
 // ROUTE-4: Trending Product
 router.get("/trending/products", getTrendingProducts);
-
 
 module.exports = router;
