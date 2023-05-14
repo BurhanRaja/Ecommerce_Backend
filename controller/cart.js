@@ -45,7 +45,7 @@ exports.addToCart = async (req, res, next) => {
     if (product.sellerid) pDetail.seller = product.sellerid;
     if (product.seller_info_id) pDetail.seller_info_id = product.seller_info_id;
     if (product.productid) pDetail.product = product.productid;
-    if (product.quantity) pDetail.quantity = product.quantity;
+    if (product.quantity) pDetail.quantity = Number(product.quantity);
 
     pDetail.product_info = {};
 
@@ -56,6 +56,8 @@ exports.addToCart = async (req, res, next) => {
 
     pDetail.is_ordered = false;
 
+    let quant = pDetail.quantity * -1;
+
     product = await Product.findOneAndUpdate(
       {
         _id: pDetail.product,
@@ -63,7 +65,7 @@ exports.addToCart = async (req, res, next) => {
       },
       {
         $inc: {
-          "images_info.quantity": -Number(pDetail.quantity),
+          "images_info.$.quantity": quant,
         },
       }
     );
@@ -107,7 +109,6 @@ exports.addToCart = async (req, res, next) => {
 exports.removeFromCart = async (req, res, next) => {
   let success = false;
   try {
-
     let cart = await Cart.findOne({ id: req.params.id, user_id: req.user.id });
 
     if (!cart) {
@@ -123,7 +124,7 @@ exports.removeFromCart = async (req, res, next) => {
       },
       {
         $inc: {
-          "images_info.quantity": cartItem.quantity,
+          "images_info.$.quantity": cartItem.quantity,
         },
       }
     );

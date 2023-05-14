@@ -566,7 +566,10 @@ exports.getImageInfo = async (req, res, next) => {
     newFilter["$elemMatch"] = updFilter;
 
     let imageInfo = await Product.findOne(
-      { id: req.params.id, images_info: newFilter },
+      {
+        id: req.params.id,
+        images_info: { ...newFilter },
+      },
       {
         "images_info.$": 1,
       }
