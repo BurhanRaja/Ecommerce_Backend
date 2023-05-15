@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "node index.js",
+    "prod": "node index.js",
     "dev": "nodemon index.js"
   },
   "repository": {
@@ -32,6 +32,7 @@
   "devDependencies": {
     "dotenv": "^16.0.3",
     "jest": "^29.5.0",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "supertest": "^6.3.3"
   }
 }

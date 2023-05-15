@@ -1,17 +1,14 @@
 const express = require("express");
 const cors = require("cors");
-const connectToMongoDB = require("./db");
-const { PORT } = require("./config/config");
 const dotenv = require("dotenv");
-const path = require("path");
+const { PORT } = require("./config/config");
+const connectToMongoDB = require("./db");
 dotenv.config();
 
-connectToMongoDB();
-
 const app = express();
-const port = PORT;
-
 app.use(express.static("public"));
+
+const port = PORT;
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -42,9 +39,13 @@ app.use("/api/sellerorder", require("./routes/sellerorder/index")); // Seller Or
 
 app.use("/api/payments", require("./routes/payment/index")); // Payment
 
+connectToMongoDB();
+
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
 });
+
+module.exports = app;
 
 // TODO:
 
