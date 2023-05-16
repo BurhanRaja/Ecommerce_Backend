@@ -1,4 +1,7 @@
-import app from "./app";
+const app = require("./app.js");
+const { PORT } = require("./config/config");
+
+const port = PORT;
 
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);

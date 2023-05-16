@@ -1,6 +1,13 @@
 const mongoose = require("mongoose");
+const {
+  MONGO_USER,
+  MONGO_PASSWORD,
+  MONGO_IP,
+  MONGO_PORT,
+  MONGO_DB,
+} = require("./config/config");
 
-let mongoURI = "mongodb://localhost:27017";
+let mongoURI = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/${MONGO_DB}`;
 
 const connectToMongoDB = () => {
   mongoose.connect(

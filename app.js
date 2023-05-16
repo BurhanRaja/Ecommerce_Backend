@@ -1,16 +1,12 @@
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
-const { PORT } = require("./config/config");
 const connectToMongoDB = require("./db");
-dotenv.config();
 
 connectToMongoDB();
 
 const app = express();
 app.use(express.static("public"));
 
-const port = PORT;
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

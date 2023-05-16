@@ -1,12 +1,11 @@
-FROM node:18.14-alpine
+FROM node:16-alpine
 WORKDIR /app
 COPY package.json .
-
 ARG NODE_ENV
-RUN if ["$NODE_ENV" = "development"]; \ 
+RUN if [ "$NODE_ENV" = "development" ]; \ 
         then npm install; \
         else npm install --only=production; \
     fi
 
 COPY . ./
-CMD ["npm", "run", "dev"]
+CMD [ "npm", "run", "dev" ]
