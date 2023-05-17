@@ -1,7 +1,10 @@
 const app = require("./app.js");
 const { PORT } = require("./config/config");
+const connectToMongoDB = require("./db");
 
 const port = PORT;
+
+connectToMongoDB();
 
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);

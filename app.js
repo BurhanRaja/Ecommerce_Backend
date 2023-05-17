@@ -1,15 +1,14 @@
 const express = require("express");
 const cors = require("cors");
-const connectToMongoDB = require("./db");
-
-connectToMongoDB();
 
 const app = express();
 app.use(express.static("public"));
 
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send({
+    message: "Welcome to Burhan's Ecommerce App"
+  });
 });
 
 app.use(cors());

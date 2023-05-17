@@ -7,9 +7,10 @@ const {
   MONGO_DB,
 } = require("./config/config");
 
-let mongoURI = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/${MONGO_DB}`;
+let mongoURI = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
 
 const connectToMongoDB = () => {
+  console.log(mongoURI);
   mongoose.connect(
     mongoURI,
     () => {
@@ -18,7 +19,6 @@ const connectToMongoDB = () => {
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true,
       useFindAndModify: false,
     },
     (err) => {

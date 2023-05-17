@@ -8,4 +8,4 @@ RUN if [ "$NODE_ENV" = "development" ]; \
     fi
 
 COPY . ./
-CMD [ "npm", "run", "dev" ]
+CMD [ "node", "index.js" ]

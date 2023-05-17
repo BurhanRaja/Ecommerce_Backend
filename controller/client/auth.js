@@ -50,6 +50,7 @@ exports.register = async (req, res, next) => {
       message: "Successfully Registered!",
     });
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ success: false, error: "Internal Server Error." });
