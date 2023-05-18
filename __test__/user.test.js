@@ -42,6 +42,7 @@ describe("User Registeration and Authentication", () => {
 // Reading User
 describe("Read, Update and Delete a User", () => {
   test("Reading the User", async () => {
+    console.log(token);
     const response = await request(app)
       .get("/api/client")
       .set("Authorization", `Bearer ${token}`);
