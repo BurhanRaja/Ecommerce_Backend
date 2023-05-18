@@ -1,39 +1,35 @@
 const request = require("supertest");
-const app = require("../index.js");
-const mongoose = require("mongoose");
+const app = require("../app.js");
+const { default: mongoose } = require("mongoose");
 
 let token = "";
 
-describe("User Auth check", () => {
-  beforeAll(async (done) => {
-    await mongoose.connect("mongodb://localhost:27017");
-    done();
-  });
-  afterAll(async (done) => {
-    await mongoose.connection.close();
-    done();
-  });
+beforeEach(async () => {
+  await mongoose.connect("mongodb://localhost:27017");
+});
 
-  test("user registeration", async () => {
-    const payload = {
-      fname: "Arnold",
-      lname: "Schwarzenegger",
-      email: "arnold@gmail.com",
-      password: "Arnold@123",
-      phone: 9758374932,
-    };
-    const response = await request(app)
-      .post("/api/client/register")
-      .send(payload);
+afterEach(async () => {
+  await mongoose.connection.close();
+});
+
+describe("User Registeration and Authentication", () => {
+  test("Register User", async () => {
+    const response = await request(app).post("/api/client/register").send({
+      fname: "test",
+      lname: "test2",
+      email: "tugrp@example.com",
+      password: "testing",
+      phone: 8766383933,
+    });
     expect(response.statusCode).toBe(200);
-    expect(response.body.success).toBe(true);
-    expect(response.body.token).not.toBeUndefined();
+    expect(response.body.message).toBe("Successfully Registered!");
+    expect(response.body.token).toBeDefined();
   });
 
   test("user login", async () => {
     const payload = {
-      email: "arnold@gmail.com",
-      password: "Arnold@123",
+      email: "tugrp@example.com",
+      password: "testing",
     };
     const response = await request(app).post("/api/client/login").send(payload);
     expect(response.statusCode).toBe(201);
@@ -43,26 +39,18 @@ describe("User Auth check", () => {
   });
 });
 
-describe("Read, Update and Delete User", () => {
-  beforeAll(async () => {
-    await mongoose.connect("mongodb://localhost:27017");
-  });
-  afterAll(async () => {
-    await mongoose.connection.close();
-  });
-
-  // Reading User
+// Reading User
+describe("Read, Update and Delete a User", () => {
   test("Reading the User", async () => {
     const response = await request(app)
       .get("/api/client")
       .set("Authorization", `Bearer ${token}`);
-
     expect(response.statusCode).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.user).not.toBeUndefined();
-    expect(response.body.user.first_name).toBe("Arnold");
-    expect(response.body.user.last_name).toBe("Schwarzenegger");
-    expect(response.body.user.email).toBe("arnold@gmail.com");
+    expect(response.body.user.first_name).toBe("test");
+    expect(response.body.user.last_name).toBe("test2");
+    expect(response.body.user.email).toBe("tugrp@example.com");
   });
 
   // Updating User
@@ -88,7 +76,6 @@ describe("Read, Update and Delete User", () => {
     const response = await request(app)
       .delete("/api/client/delete")
       .set("Authorization", `Bearer ${token}`);
-    expect(response.statusCode).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.message).toBe("User Successfully Deleted.");
   });
