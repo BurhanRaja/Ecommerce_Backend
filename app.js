@@ -37,5 +37,4 @@ app.use("/api/sellerorder", require("./routes/sellerorder/index")); // Seller Or
 app.use("/api/payments", require("./routes/payment/index")); // Payment
 
 
-
 module.exports = app;
