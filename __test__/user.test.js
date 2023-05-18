@@ -35,14 +35,13 @@ describe("User Registeration and Authentication", () => {
     expect(response.statusCode).toBe(201);
     expect(response.body.success).toBe(true);
     expect(response.body.token).not.toBeUndefined();
-    token = response.body.token;
+    token += response.body.token;
   });
 });
 
 // Reading User
 describe("Read, Update and Delete a User", () => {
   test("Reading the User", async () => {
-    console.log(token);
     const response = await request(app)
       .get("/api/client")
       .set("Authorization", `Bearer ${token}`);
