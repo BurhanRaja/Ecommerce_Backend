@@ -1,11 +1,8 @@
 const request = require("supertest");
 const app = require("../app.js");
-const jwt = require("jsonwebtoken");
 const { default: mongoose } = require("mongoose");
-const User = require("../model/User.js");
-const { SECRET_KEY } = require("../config/config.js");
 
-let user = "";
+let token = "";
 
 beforeEach(async () => {
   await mongoose.connect("mongodb://localhost:27017");
@@ -38,33 +35,16 @@ describe("User Registeration and Authentication", () => {
     expect(response.statusCode).toBe(201);
     expect(response.body.success).toBe(true);
     expect(response.body.token).not.toBeUndefined();
-
-    user = await User.findOne({ email: payload.email });
+    token += response.body.token;
   });
 });
-
-async function loginUser(email, password) {
-  const payload = {
-    email,
-    password,
-  };
-  const response = await request(app).post("/api/client/login").send(payload);
-  return response.body.token;
-}
 
 // Reading User
 describe("Read, Update and Delete a User", () => {
   test("Reading the User", async () => {
-    let data = {
-      user: {
-        id: user._id,
-      },
-    };
-    let privateKey = SECRET_KEY;
-
     const response = await request(app)
       .get("/api/client")
-      .set("Authorization", `Bearer ${jwt.sign(data, privateKey)}`);
+      .set("Authorization", `Bearer ${token}`);
     expect(response.statusCode).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.user).not.toBeUndefined();
@@ -75,13 +55,6 @@ describe("Read, Update and Delete a User", () => {
 
   // Updating User
   test("Updating the User", async () => {
-    let data = {
-      user: {
-        id: user._id,
-      },
-    };
-    let privateKey = SECRET_KEY;
-
     const payload = {
       fname: "Arnold",
       lname: "Schwarzenegger",
@@ -92,7 +65,7 @@ describe("Read, Update and Delete a User", () => {
     const response = await request(app)
       .put("/api/client/update")
       .send(payload)
-      .set("Authorization", `Bearer ${jwt.sign(data, privateKey)}`);
+      .set("Authorization", `Bearer ${token}`);
     expect(response.statusCode).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.user).not.toBeUndefined();
@@ -100,16 +73,9 @@ describe("Read, Update and Delete a User", () => {
 
   // Delete User
   test("Delete the User", async () => {
-    let data = {
-      user: {
-        id: user._id,
-      },
-    };
-    let privateKey = SECRET_KEY;
-
     const response = await request(app)
       .delete("/api/client/delete")
-      .set("Authorization", `Bearer ${jwt.sign(data, privateKey)}`);
+      .set("Authorization", `Bearer ${token}`);
     expect(response.body.success).toBe(true);
     expect(response.body.message).toBe("User Successfully Deleted.");
   });

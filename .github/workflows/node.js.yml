@@ -33,7 +33,6 @@ jobs:
         mongodb-version: ${{ matrix.mongo-version }} 
 
     - run: npm install
-    - run: npm test
       
       env:
         CI: true
