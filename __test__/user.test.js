@@ -39,9 +39,19 @@ describe("User Registeration and Authentication", () => {
   });
 });
 
+async function loginUser(email, password) {
+  const payload = {
+    email,
+    password,
+  };
+  const response = await request(app).post("/api/client/login").send(payload);
+  return response.body.token;
+}
+
 // Reading User
 describe("Read, Update and Delete a User", () => {
   test("Reading the User", async () => {
+    let token = await loginUser("tugrp@example.com", "testing");
     const response = await request(app)
       .get("/api/client")
       .set("Authorization", `Bearer ${token}`);
@@ -55,6 +65,7 @@ describe("Read, Update and Delete a User", () => {
 
   // Updating User
   test("Updating the User", async () => {
+    let token = await loginUser("tugrp@example.com", "testing");
     const payload = {
       fname: "Arnold",
       lname: "Schwarzenegger",
@@ -73,6 +84,7 @@ describe("Read, Update and Delete a User", () => {
 
   // Delete User
   test("Delete the User", async () => {
+    let token = await loginUser("arnold1234@gmail.com", "Arnold@123");
     const response = await request(app)
       .delete("/api/client/delete")
       .set("Authorization", `Bearer ${token}`);
