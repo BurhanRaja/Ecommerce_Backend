@@ -50,14 +50,14 @@ jobs:
 
       - name: Add secrets to Task Definition
         run: |
-          sed 's/<mongo_db>/$MONGO_DB/g' ./task.json
-          sed 's/<mongo_password>/$MONGO_PASSWORD/g' ./task.json
-          sed 's/<secret_key>/$SECRET_KEY/g' task.json
-          sed 's/<razorpay_key_id>/$RAZORPAY_KEY_ID/g' ./task.json
-          sed 's/<razorpay_secret_key>/$RAZORPAY_SECRET_KEY/g' ./task.json
-          sed 's/<mongo_user>/$MONGO_USER/g' ./task.json
-          sed 's/<mongo_initdb_root_username>/$MONGO_INITDB_ROOT_USERNAME/g' ./task.json
-          sed 's/<mongo_initdb_root_password>/$MONGO_INITDB_ROOT_PASSWORD/g' ./task.json
+          sed -i 's/<mongo_db>/$MONGO_DB/g' ./task.json
+          sed -i 's/<mongo_password>/$MONGO_PASSWORD/g' ./task.json
+          sed -i 's/<secret_key>/$SECRET_KEY/g' task.json
+          sed -i 's/<razorpay_key_id>/$RAZORPAY_KEY_ID/g' ./task.json
+          sed -i 's/<razorpay_secret_key>/$RAZORPAY_SECRET_KEY/g' ./task.json
+          sed -i 's/<mongo_user>/$MONGO_USER/g' ./task.json
+          sed -i 's/<mongo_initdb_root_username>/$MONGO_INITDB_ROOT_USERNAME/g' ./task.json
+          sed -i 's/<mongo_initdb_root_password>/$MONGO_INITDB_ROOT_PASSWORD/g' ./task.json
         env:
           MONGO_DB: ${{secrets.APP_MONGO_DB}}
           SECRET_KEY: ${{secrets.APP_SECRET_KEY}}
