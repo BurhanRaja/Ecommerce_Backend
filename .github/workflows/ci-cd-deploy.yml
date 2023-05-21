@@ -1,4 +1,4 @@
-name: Publish Docker image
+name: Publish Docker image and deploy to AWS ECS
 
 on:
   push:
@@ -8,12 +8,26 @@ on:
   release:
     types: [published]
 
+env:
+  AWS_REGION: ap-south-1 # set this to your preferred AWS region, e.g. us-west-1
+  ECS_SERVICE: ecommerce-api # set this to your Amazon ECS service name
+  ECS_CLUSTER: Ecommerce-cluster # set this to your Amazon ECS cluster name
+  ECS_TASK_DEFINITION: ./task.json
+  CONTAINER_NAME: ecommerce-node-api
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -32,4 +46,40 @@ jobs:
           file: ./Dockerfile
           build-args: NODE_ENV=production
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce_project:v2.0
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce_project:v3.0
+
+      - name: Add secrets to Task Definition
+        run: |
+          sed -i "s/<mongo_db>/$MONGO_DB/g" task.json
+          sed -i "s/<mongo_password>/$MONGO_PASSWORD/g" task.json
+          sed -i "s/<secret_key>/$SECRET_KEY/g" task.json
+          sed -i "s/<razorpay_key_id>/$RAZORPAY_KEY_ID/g" task.json
+          sed -i "s/<razorpay_secret_key>/$RAZORPAY_SECRET_KEY/g" task.json
+          sed -i "s/<mongo_user>/$MONGO_USER/g" task.json
+          sed -i "s/<mongo_initdb_root_username>/$MONGO_INITDB_ROOT_USERNAME/g" task.json
+          sed -i "s/<mongo_initdb_root_password>/$MONGO_INITDB_ROOT_PASSWORD/g" task.json
+        env:
+          MONGO_DB: ${{secrets.APP_MONGO_DB}}
+          SECRET_KEY: ${{secrets.APP_SECRET_KEY}}
+          RAZORPAY_KEY_ID: ${{secrets.APP_RAZORPAY_KEY_ID}}
+          RAZORPAY_SECRET_KEY: ${{secrets.APP_RAZORPAY_SECRET_KEY}}
+          MONGO_USER: ${{secrets.MONGO_USER}}
+          MONGO_PASSWORD: ${{secrets.MONGO_PASSWORD}}
+          MONGO_INITDB_ROOT_USERNAME: ${{secrets.MONGO_USER}}
+          MONGO_INITDB_ROOT_PASSWORD: ${{secrets.MONGO_PASSWORD}}
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce_project:v3.0
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
