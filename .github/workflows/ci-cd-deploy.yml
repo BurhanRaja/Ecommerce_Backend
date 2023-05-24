@@ -13,7 +13,8 @@ env:
   ECS_SERVICE: ecommerce-api # set this to your Amazon ECS service name
   ECS_CLUSTER: Ecommerce-cluster # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: .github/workflows/task.json
-  CONTAINER_NAME: ecommerce-node-api
+  CONTAINER_NAME_1: ecommerce-node-api
+  CONTAINER_NAME_2: mongodb
   MONGO_DB: ${{secrets.APP_MONGO_DB}}
   SECRET_KEY: ${{secrets.APP_SECRET_KEY}}
   RAZORPAY_KEY_ID: ${{secrets.APP_RAZORPAY_KEY_ID}}
@@ -66,17 +67,25 @@ jobs:
           sed -i 's/<mongo_initdb_root_password>/${{env.MONGO_PASSWORD}}/g' .github/workflows/task.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
+        id: task-def-1
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
-          container-name: ${{ env.CONTAINER_NAME }}
+          container-name: ${{ env.CONTAINER_NAME_1 }}
           image: ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce_project:v3.0
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def-2
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def-1.outputs.task-definition }}
+          container-name: ${{ env.CONTAINER_NAME_2 }}
+          image: mongo
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          task-definition: ${{ steps.task-def-2.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
