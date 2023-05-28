@@ -1,11 +1,14 @@
 const request = require("supertest");
 const app = require("../app.js");
 const { default: mongoose } = require("mongoose");
+const { MONGO_URL } = require("../config/config.js");
 
 let token = "";
 
 beforeEach(async () => {
-  await mongoose.connect("mongodb://localhost:27017");
+  MONGO_URL
+    ? await mongoose.connect(MONGO_URL)
+    : await mongoose.connect("mongodb://localhost:27017");
 });
 
 afterEach(async () => {
@@ -40,7 +43,7 @@ describe("User Registeration and Authentication", () => {
 });
 
 describe("Read, Update and Delete a User", () => {
-// Reading User
+  // Reading User
   test("Reading the User", async () => {
     const response = await request(app)
       .get("/api/client")

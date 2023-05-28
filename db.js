@@ -5,9 +5,10 @@ const {
   MONGO_IP,
   MONGO_PORT,
   MONGO_DB,
+  MONGO_URL,
 } = require("./config/config");
 
-let mongoURI = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
+let mongoURI = MONGO_URL ? MONGO_URL : `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
 
 const connectToMongoDB = () => {
   mongoose.connect(
