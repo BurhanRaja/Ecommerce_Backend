@@ -8,7 +8,7 @@ on:
   release:
     types: [published]
 
-env:
+# env:
   # AWS_REGION: ap-south-1 # set this to your preferred AWS region, e.g. us-west-1
   # ECS_SERVICE: ecommerce-api # set this to your Amazon ECS service name
   # ECS_CLUSTER: Ecommerce-cluster # set this to your Amazon ECS cluster name
