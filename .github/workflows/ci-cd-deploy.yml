@@ -9,18 +9,18 @@ on:
     types: [published]
 
 env:
-  AWS_REGION: ap-south-1 # set this to your preferred AWS region, e.g. us-west-1
-  ECS_SERVICE: ecommerce-api # set this to your Amazon ECS service name
-  ECS_CLUSTER: Ecommerce-cluster # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: .github/workflows/task.json
-  CONTAINER_NAME_1: ecommerce-node-api
-  CONTAINER_NAME_2: mongodb
-  MONGO_DB: ${{secrets.APP_MONGO_DB}}
-  SECRET_KEY: ${{secrets.APP_SECRET_KEY}}
-  RAZORPAY_KEY_ID: ${{secrets.APP_RAZORPAY_KEY_ID}}
-  RAZORPAY_SECRET_KEY: ${{secrets.APP_RAZORPAY_SECRET_KEY}}
-  MONGO_USER: ${{secrets.MONGO_USER}}
-  MONGO_PASSWORD: ${{secrets.MONGO_PASSWORD}}
+  # AWS_REGION: ap-south-1 # set this to your preferred AWS region, e.g. us-west-1
+  # ECS_SERVICE: ecommerce-api # set this to your Amazon ECS service name
+  # ECS_CLUSTER: Ecommerce-cluster # set this to your Amazon ECS cluster name
+  # ECS_TASK_DEFINITION: .github/workflows/task.json
+  # CONTAINER_NAME_1: ecommerce-node-api
+  # CONTAINER_NAME_2: mongodb
+  # MONGO_DB: ${{secrets.APP_MONGO_DB}}
+  # SECRET_KEY: ${{secrets.APP_SECRET_KEY}}
+  # RAZORPAY_KEY_ID: ${{secrets.APP_RAZORPAY_KEY_ID}}
+  # RAZORPAY_SECRET_KEY: ${{secrets.APP_RAZORPAY_SECRET_KEY}}
+  # MONGO_USER: ${{secrets.MONGO_USER}}
+  # MONGO_PASSWORD: ${{secrets.MONGO_PASSWORD}}
 
 jobs:
   build:
@@ -29,12 +29,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -55,39 +55,39 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce_project:v3.0
 
-      - name: Add secrets to Task Definition
-        run: |
-          sed -i 's/<mongo_db>/${{env.MONGO_DB}}/g' .github/workflows/task.json
-          sed -i 's/<mongo_password>/${{env.MONGO_PASSWORD}}/g' .github/workflows/task.json
-          sed -i 's/<secret_key>/${{env.SECRET_KEY}}/g' .github/workflows/task.json
-          sed -i 's/<razorpay_key_id>/${{env.RAZORPAY_KEY_ID}}/g' .github/workflows/task.json
-          sed -i 's/<razorpay_secret_key>/${{env.RAZORPAY_SECRET_KEY}}/g' .github/workflows/task.json
-          sed -i 's/<mongo_user>/${{env.MONGO_USER}}/g' .github/workflows/task.json
-          sed -i 's/<mongo_initdb_root_username>/${{env.MONGO_USER}}/g' .github/workflows/task.json
-          sed -i 's/<mongo_initdb_root_password>/${{env.MONGO_PASSWORD}}/g' .github/workflows/task.json
+      # - name: Add secrets to Task Definition
+      #   run: |
+      #     sed -i 's/<mongo_db>/${{env.MONGO_DB}}/g' .github/workflows/task.json
+      #     sed -i 's/<mongo_password>/${{env.MONGO_PASSWORD}}/g' .github/workflows/task.json
+      #     sed -i 's/<secret_key>/${{env.SECRET_KEY}}/g' .github/workflows/task.json
+      #     sed -i 's/<razorpay_key_id>/${{env.RAZORPAY_KEY_ID}}/g' .github/workflows/task.json
+      #     sed -i 's/<razorpay_secret_key>/${{env.RAZORPAY_SECRET_KEY}}/g' .github/workflows/task.json
+      #     sed -i 's/<mongo_user>/${{env.MONGO_USER}}/g' .github/workflows/task.json
+      #     sed -i 's/<mongo_initdb_root_username>/${{env.MONGO_USER}}/g' .github/workflows/task.json
+      #     sed -i 's/<mongo_initdb_root_password>/${{env.MONGO_PASSWORD}}/g' .github/workflows/task.json
 
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def-1
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
-          container-name: ${{ env.CONTAINER_NAME_1 }}
-          image: ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce_project:v3.0
+      # - name: Fill in the new image ID in the Amazon ECS task definition
+      #   id: task-def-1
+      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+      #   with:
+      #     task-definition: ${{ env.ECS_TASK_DEFINITION }}
+      #     container-name: ${{ env.CONTAINER_NAME_1 }}
+      #     image: ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce_project:v3.0
 
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def-2
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def-1.outputs.task-definition }}
-          container-name: ${{ env.CONTAINER_NAME_2 }}
-          image: mongo
+      # - name: Fill in the new image ID in the Amazon ECS task definition
+      #   id: task-def-2
+      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+      #   with:
+      #     task-definition: ${{ steps.task-def-1.outputs.task-definition }}
+      #     container-name: ${{ env.CONTAINER_NAME_2 }}
+      #     image: mongo
 
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def-2.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+      # - name: Deploy Amazon ECS task definition
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     task-definition: ${{ steps.task-def-2.outputs.task-definition }}
+      #     service: ${{ env.ECS_SERVICE }}
+      #     cluster: ${{ env.ECS_CLUSTER }}
+      #     wait-for-service-stability: true
     env:
       CI: true

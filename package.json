@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "test": "jest --detectOpenHandles",
-    "prod": "node index.js",
+    "start": "node index.js",
     "dev": "nodemon -L index.js"
   },
   "repository": {
@@ -20,6 +23,7 @@
   },
   "homepage": "https://github.com/BurhanRaja/Ecommerce_Backend#readme",
   "dependencies": {
+    "@vercel/node": "^2.14.3",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
