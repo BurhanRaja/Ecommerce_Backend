@@ -39,8 +39,8 @@ describe("User Registeration and Authentication", () => {
   });
 });
 
-// Reading User
 describe("Read, Update and Delete a User", () => {
+// Reading User
   test("Reading the User", async () => {
     const response = await request(app)
       .get("/api/client")
