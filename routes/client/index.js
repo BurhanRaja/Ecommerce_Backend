@@ -16,7 +16,10 @@ const router = express.Router();
 // ROUTE-3: Update User
 // ROUTE-3: Delete User
 
-// Register
+/** 
+
+ */
+
 router.post(
   "/register",
   [
