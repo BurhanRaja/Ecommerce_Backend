@@ -40,7 +40,6 @@ exports.register = async (req, res, next) => {
     };
 
     let privateKey = SECRET_KEY;
-    console.log(privateKey);
     let authToken = jwt.sign(data, privateKey);
 
     success = true;
