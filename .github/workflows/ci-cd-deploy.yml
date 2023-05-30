@@ -1,4 +1,4 @@
-name: Publish Docker image and deploy to AWS ECS
+name: Publish Docker image
 
 on:
   push:

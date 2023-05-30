@@ -1,11 +1,20 @@
 const express = require("express");
 const cors = require("cors");
+const YAML = require("yamljs");
+const swaggerUI = require("swagger-ui-express");
+const bodyParser = require("body-parser");
+const { PORT } = require("./config/config");
+
 const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
+
+swaggerSpec = YAML.load("swagger.yaml");
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 app.get("/", (req, res) => {
   res.send({
-    message: "Welcome to Burhan's Ecommerce App"
+    message: "Welcome to Burhan's Ecommerce App",
   });
 });
 
@@ -33,6 +42,5 @@ app.use("/api/order", require("./routes/order/index")); // Order
 app.use("/api/sellerorder", require("./routes/sellerorder/index")); // Seller Order
 
 app.use("/api/payments", require("./routes/payment/index")); // Payment
-
 
 module.exports = app;

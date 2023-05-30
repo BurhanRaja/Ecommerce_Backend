@@ -1,0 +1,175 @@
+openapi: '3.0.2'
+info:
+  title: Ecommerce API
+  version: '1.0'
+servers:
+  - url: http://localhost:3000
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /:
+    get:
+      summary: Greetings from Ecommerce
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /api/client/register:
+    post:
+      tags:
+        - "Users"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fname:
+                  type: string
+                lname:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                phone:
+                  type: number
+              example:
+                fname: Burhan
+                lname: Ali
+                email: ejeyd@example.com
+                password: Any123$%
+                phone: 1234567890
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  token:
+                    type: string
+        '400':
+          description: Error while Registration
+        '500':
+          description: Internal Server Error
+  /api/client/login:
+    post:
+      tags:
+        - "Users"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              example:
+                email: ejeyd@example.com
+                password: Any123$%
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  token:
+                    type: string
+        '400':
+          description: Error while Registration
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /api/client:
+    get:
+      tags:
+        - "Users"
+      security:
+        - bearerAuth: []
+      responses:
+        "200": 
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  user:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      first_name:
+                        type: string
+                      last_name:
+                        type: string
+                      phone_number:
+                        type: number
+                      email:
+                        type: string
+                      createdAt:
+                        type: string
+                      updatedAt:
+                        type: string
+        "401":
+          description: UnAuthorized Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+      
+
+        
+
+

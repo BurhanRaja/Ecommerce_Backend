@@ -23,17 +23,14 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
-    custormer_id: {
-      type: String,
-    }
   },
   {
     timestamps: true,
   }
 );
 
-UserSchema.post('findOneAndDelete', async function(user, next) {
-  await Useraddress.deleteOne({user_id: user._id});
+UserSchema.post("findOneAndDelete", async function (user, next) {
+  await Useraddress.deleteOne({ user_id: user._id });
   next();
 });
 

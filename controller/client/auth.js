@@ -40,7 +40,6 @@ exports.register = async (req, res, next) => {
     };
 
     let privateKey = SECRET_KEY;
-    console.log(privateKey);
     let authToken = jwt.sign(data, privateKey);
 
     success = true;
@@ -51,6 +50,7 @@ exports.register = async (req, res, next) => {
       message: "Successfully Registered!",
     });
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ success: false, error: "Internal Server Error.", error: err });
