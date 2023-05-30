@@ -1,16 +1,14 @@
 const express = require("express");
 const cors = require("cors");
-const YAML = require("yamljs");
 const swaggerUI = require("swagger-ui-express");
+const swaggerJson = require("./swagger.json");
 const bodyParser = require("body-parser");
-const { PORT } = require("./config/config");
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
-swaggerSpec = YAML.load("swagger.yaml");
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJson));
 
 app.get("/", (req, res) => {
   res.send({

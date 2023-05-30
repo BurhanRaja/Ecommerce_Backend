@@ -28,7 +28,7 @@ exports.updateUser = async (req, res, next) => {
   validateReq(req, res);
 
   try {
-    const { fname, lname, email, password, phone } = req.body;
+    const { fname, lname, email, phone } = req.body;
 
     const updUser = {};
 
@@ -49,11 +49,6 @@ exports.updateUser = async (req, res, next) => {
         error: "User already Exists.",
       });
     }
-
-    const salt = await bcrypt.genSalt(10);
-    const securePassword = await bcrypt.hash(password, salt);
-
-    if (password) updUser.password = securePassword;
 
     user = await User.findByIdAndUpdate(
       req.user.id,
