@@ -13,6 +13,7 @@ components:
 paths:
   /:
     get:
+      summary: Greetings from Ecommerce
       responses:
         '200':
           description: OK
@@ -25,6 +26,8 @@ paths:
                     type: string
   /api/client/register:
     post:
+      tags:
+        - "Users"
       requestBody:
         content:
           application/json:
@@ -67,6 +70,8 @@ paths:
           description: Internal Server Error
   /api/client/login:
     post:
+      tags:
+        - "Users"
       requestBody:
         content:
           application/json:
@@ -109,6 +114,8 @@ paths:
                     type: string
   /api/client:
     get:
+      tags:
+        - "Users"
       security:
         - bearerAuth: []
       responses:
