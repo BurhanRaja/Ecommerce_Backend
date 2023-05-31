@@ -234,7 +234,7 @@ exports.addReview = async (req, res, next) => {
       }
     );
 
-    if (reviews) {
+    if (reviews.reviews.length > 0) {
       return res
         .status(400)
         .send({ success, message: "Rating already added." });

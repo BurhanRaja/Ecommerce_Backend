@@ -32,38 +32,35 @@ exports.updateUser = async (req, res, next) => {
 
     const updUser = {};
 
-    if (fname) updUser.fname = fname;
-    if (lname) updUser.lname = lname;
+    if (fname) updUser.first_name = fname;
+    if (lname) updUser.last_name = lname;
     if (email) updUser.email = email;
-    if (phone) updUser.phone = phone;
+    if (phone) updUser.phone_number = phone;
 
-    let user = await User.findById(req.user.id);
+    let user = await User.findOne({ _id: req.user.id, email: email });
     if (!user) {
-      return res.status(404).send({ success, error: "404 Not Found." });
-    }
-
-    user = await User.findOne({ email: email });
-    if (user) {
-      return res.status(400).send({
+      return res.status(404).send({
         success,
-        error: "User already Exists.",
+        error: "User doesn't Exists.",
       });
     }
 
-    user = await User.findByIdAndUpdate(
-      req.user.id,
+    user = await User.findOneAndUpdate(
+      { _id: req.user.id },
       { $set: updUser },
       { new: true }
     );
 
     success = true;
 
-    return res.status(200).send({
+    return res.status(200).json({
       success,
-      user,
+      message: "User Successfully Updated.",
     });
   } catch (err) {
-    res.status(500).send({ success: false, error: "Internal Server Error." });
+    return res
+      .status(500)
+      .json({ success: false, error: "Internal Server Occurred." });
   }
 };
 
@@ -81,11 +78,13 @@ exports.deleteUser = async (req, res, next) => {
 
     success = true;
 
-    res.status(200).send({
+    return res.status(200).send({
       success,
       message: "User Successfully Deleted.",
     });
   } catch (err) {
-    res.status(500).send({ success: false, error: "Internal Server Error." });
+    return res
+      .status(500)
+      .send({ success: false, error: "Internal Server Error." });
   }
 };

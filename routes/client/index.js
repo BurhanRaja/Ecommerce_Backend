@@ -62,7 +62,6 @@ router.put(
       min: 2,
     }),
     body("email", "Please enter correct email.").isEmail(),
-    body("password", "Please enter a strong password").isLength({ min: 5 }),
     body("phone", "Please Enter only 10 numbers").isLength({
       min: 10,
       max: 10,
