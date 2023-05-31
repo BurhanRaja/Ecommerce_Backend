@@ -1,12 +1,13 @@
 const request = require("supertest");
 const app = require("../app.js");
 const { default: mongoose } = require("mongoose");
+const { MONGO_URL } = require("../config/config.js");
 
 let token = "";
 
 describe("User Registeration and Authentication", () => {
   beforeAll(async () => {
-    await mongoose.connect("mongodb://localhost:27017");
+    await mongoose.connect(MONGO_URL);
   });
 
   afterAll(async () => {

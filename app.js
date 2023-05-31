@@ -8,7 +8,14 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJson));
+app.use(
+  "/api-docs",
+  swaggerUI.serve,
+  swaggerUI.setup(swaggerJson, {
+    customCssUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui.js",
+  })
+);
 
 app.get("/", (req, res) => {
   res.send({
