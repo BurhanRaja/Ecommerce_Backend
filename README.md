@@ -100,8 +100,6 @@ Run and Build Docker Compose in detached Mode
 docker-compose up -d
 ```
 
-## Demo
-
 ## Technologies Used
 
 <head>
