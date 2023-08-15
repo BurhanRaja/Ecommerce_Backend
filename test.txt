@@ -1,0 +1,1 @@
+reason: TopologyDescription { type: 'Unknown', servers: Map(1) { 'localhost:27017' => [ServerDescription] }, stale: false, compatible: true, heartbeatFrequencyMS: 10000, localThresholdMS: 15, setName: null, maxElectionId: null, maxSetVersion: null, commonWireVersion: 0, logicalSessionTimeoutMinutes: null    },    code: undefined  }
