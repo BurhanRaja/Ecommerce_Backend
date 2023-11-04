@@ -361,8 +361,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
     let updFilters = {} as ProductFilter;
     let price_range = [];
     let gte = 0;
-    let lte = 100000000000000;
-    let rating = 5;
+    let lte = 1000000000000;
 
     if (filters.company) {
       updFilters["seller_info"] = {
@@ -388,7 +387,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
       lte = parseInt(price_range[1]);
     }
     if (filters.rating) {
-      rating = Number(filters.rating);
+      updFilters["review"] = { ratings: { $lte: Number(filters.rating) } };
     }
 
     let products = await Product.find({
@@ -397,7 +396,6 @@ export const getAllProducts = async (req: Request, res: Response) => {
         $gte: gte,
         $lte: lte,
       },
-      "reviews.ratings": { $lte: Number(rating) },
     }).populate<Pick<PopulatedDiscount, "discount">>("discount");
 
     if (!products) {

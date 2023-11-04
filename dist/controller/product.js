@@ -304,8 +304,7 @@ export const getAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, fu
         let updFilters = {};
         let price_range = [];
         let gte = 0;
-        let lte = 100000000000000;
-        let rating = 5;
+        let lte = 1000000000000;
         if (filters.company) {
             updFilters["seller_info"] = {
                 $in: filters.company.split(","),
@@ -330,12 +329,12 @@ export const getAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, fu
             lte = parseInt(price_range[1]);
         }
         if (filters.rating) {
-            rating = Number(filters.rating);
+            updFilters["review"] = { ratings: { $lte: Number(filters.rating) } };
         }
         let products = yield Product.find(Object.assign(Object.assign({}, updFilters), { "images_info.price": {
                 $gte: gte,
                 $lte: lte,
-            }, "reviews.ratings": { $lte: Number(rating) } })).populate("discount");
+            } })).populate("discount");
         if (!products) {
             return res.status(404).send({ success, message: "404 Not Found" });
         }
