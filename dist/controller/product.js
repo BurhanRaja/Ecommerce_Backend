@@ -303,6 +303,9 @@ export const getAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, fu
         let filters = req.query;
         let updFilters = {};
         let price_range = [];
+        let gte = 0;
+        let lte = 10000000000000000;
+        let rating = 5;
         if (filters.company) {
             updFilters["seller_info"] = {
                 $in: filters.company.split(","),
@@ -323,17 +326,16 @@ export const getAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, fu
         }
         if (filters.price) {
             price_range = filters.price.split(",");
-            updFilters["images_info"] = {
-                price: {
-                    $gte: Number(price_range[0]) || 0,
-                    $lte: Number(price_range[1]) || 1000000,
-                },
-            };
+            gte = parseInt(price_range[0]);
+            lte = parseInt(price_range[1]);
         }
         if (filters.rating) {
-            updFilters["review"] = { ratings: { $lte: Number(filters.rating) } };
+            rating = Number(filters.rating);
         }
-        let products = yield Product.find(Object.assign({}, updFilters)).populate("discount");
+        let products = yield Product.find(Object.assign(Object.assign({}, updFilters), { "images_info.price": {
+                $gte: gte,
+                $lte: lte,
+            }, "reviews.ratings": { $lte: Number(rating) } })).populate("discount");
         if (!products) {
             return res.status(404).send({ success, message: "404 Not Found" });
         }
@@ -349,6 +351,7 @@ export const getAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, fu
         });
     }
     catch (err) {
+        console.log(err);
         return res
             .status(500)
             .send({ success: false, error: "Internal Server Error" });

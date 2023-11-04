@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 const configuration = {
-    PORT: process.env.PORT || 3000,
+    PORT: process.env.PORT || 8080,
     MONGO_URL: process.env.MONGO_URL,
     MONGO_IP: process.env.MONGO_IP || "localhost",
     MONGO_PORT: process.env.MONGO_PORT || 27017,

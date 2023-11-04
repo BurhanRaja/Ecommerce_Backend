@@ -360,6 +360,9 @@ export const getAllProducts = async (req: Request, res: Response) => {
     let filters = req.query;
     let updFilters = {} as ProductFilter;
     let price_range = [];
+    let gte = 0;
+    let lte = 10000000000000000;
+    let rating = 5;
 
     if (filters.company) {
       updFilters["seller_info"] = {
@@ -381,19 +384,20 @@ export const getAllProducts = async (req: Request, res: Response) => {
     }
     if (filters.price) {
       price_range = (filters.price as string).split(",");
-      updFilters["images_info"] = {
-        price: {
-          $gte: Number(price_range[0]) || 0,
-          $lte: Number(price_range[1]) || 1000000,
-        },
-      };
+      gte = parseInt(price_range[0]);
+      lte = parseInt(price_range[1]);
     }
     if (filters.rating) {
-      updFilters["review"] = { ratings: { $lte: Number(filters.rating) } };
+      rating = Number(filters.rating);
     }
 
     let products = await Product.find({
       ...updFilters,
+      "images_info.price": {
+        $gte: gte,
+        $lte: lte,
+      },
+      "reviews.ratings": { $lte: Number(rating) },
     }).populate<Pick<PopulatedDiscount, "discount">>("discount");
 
     if (!products) {
@@ -415,6 +419,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
       products,
     });
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .send({ success: false, error: "Internal Server Error" });
