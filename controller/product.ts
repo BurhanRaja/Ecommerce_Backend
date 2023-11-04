@@ -361,7 +361,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
     let updFilters = {} as ProductFilter;
     let price_range = [];
     let gte = 0;
-    let lte = 10000000000000000;
+    let lte = 100000000000000;
     let rating = 5;
 
     if (filters.company) {

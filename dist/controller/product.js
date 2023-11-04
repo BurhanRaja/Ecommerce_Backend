@@ -304,7 +304,7 @@ export const getAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, fu
         let updFilters = {};
         let price_range = [];
         let gte = 0;
-        let lte = 10000000000000000;
+        let lte = 100000000000000;
         let rating = 5;
         if (filters.company) {
             updFilters["seller_info"] = {
